@@ -1375,7 +1375,7 @@
             $paymentDate = $_POST["paymentDate"];
             $NotesByAdmin = $_POST["NotesByAdmin"];
             $FeeStatus = "cleared";
-            $print_generated_by = $_POST["print_generated_by"];
+            $print_generated_by = $_SESSION["admin_name"];
             if($rebate_amount > 0){
                 if($rebate_from == ""){
                     echo '<div class="alert alert-danger alert-dismissible">
@@ -1387,82 +1387,139 @@
                     $implodedRebate = $rebate_amount.",".$rebate_from;
             } else
                 $implodedRebate = ""; 
-            if(!empty( $registrationNumber && $academicYear && $courseId ) && ( count($particular_paid_id) != 0 ) && ( count($particular_paid_amount) != 0 ) && !empty( $total_amount )){ 
-                if(($PaymentMode != "0" && $cashDepositTo != "0") || ($PaymentMode != "0" && !empty($chequeAndOthersNumber))){
-                    if($fine_amount >= 0 && $rebate_amount >= 0 && $total_amount >= 0 && $remaining_amount >= 0){
-                        $getRe = "SELECT `feepaid_id` FROM `tbl_fee_paid`
-                                  WHERE `status` = '$visible'
-                                 ";  
-                        $receipt_no_gen = 0;
-                        $getReResult =  $con->query($getRe);
-                        while($getReRow = $getReResult->fetch_assoc())
-                            $receipt_no_gen = $getReRow["feepaid_id"];
-                        $receipt_no_gen++;
-                        $implodedId = implode(",", $particular_paid_id);
-                        $implodedAmount = implode(",", $particular_paid_amount);
-                        if(isset($_POST["extra_fine"]) && !empty($_POST["extra_fine"]))
-                        	$complete_extra_fine = $_POST["extra_fine"] +"|separator|"+ htmlspecialchars($_POST["extra_fine_description"], ENT_QUOTES);
-                       	else
-                       		$complete_extra_fine = "";
-                        if($PaymentMode == "Cheque")
-                            $FeeStatus = "pending";
-                        $sql = "INSERT INTO `tbl_fee_paid`
-                                (`feepaid_id`, `student_id`, `course_id`, `particular_id`, `paid_amount`, `rebate_amount`, `fine`, `extra_fine`, `balance`, `payment_mode`, `cash_deposit_to`, `cash_date`, `notes`, `receipt_date`, `bank_name`, `transaction_no`, `transaction_date`, `receipt_no`, `paid_on`, `university_details_id`, `fee_paid_time`, `payment_status`,`print_generated_by`, `status`) 
-                                VALUES 
-                                ('', '$registrationNumber', '$courseId', '$implodedId', '$implodedAmount', '$implodedRebate', '$fine_amount', '$complete_extra_fine', '$remaining_amount', '$PaymentMode', '$cashDepositTo', '$paymentDate', '$NotesByAdmin', '$paidDate', '$bankName', '$chequeAndOthersNumber', '$paymentDate', 'NSU_$receipt_no_gen', '$paymentDate', '$academicYear', '$date_variable_today_month_year_with_timing', '$FeeStatus','$print_generated_by', '$visible')
+                $flag=0;
+
+                if (!empty($registrationNumber && $academicYear && $courseId) && !empty($total_amount)) {
+                    if (($PaymentMode != "0" && $cashDepositTo != "0") || ($PaymentMode != "0" && !empty($chequeAndOthersNumber))) {
+                        if ($fine_amount >= 0 && $rebate_amount >= 0 && $total_amount >= 0 && $remaining_amount >= 0) {
+                            $getRe = "SELECT `feepaid_id` FROM `tbl_fee_paid`
+                                          WHERE `status` = '$visible'
+                                         ";
+                            $receipt_no_gen = 0;
+                            $getReResult =  $con->query($getRe);
+        
+                            while ($getReRow = $getReResult->fetch_assoc())
+                                $receipt_no_gen = $getReRow["feepaid_id"];
+                            $receipt_no_gen++;
+                            $implodedId = implode(",", $particular_paid_id);
+                            $implodedAmount = implode(",", $particular_paid_amount);
+                            if (isset($_POST["extra_fine"]) && !empty($_POST["extra_fine"])) {
+                                $complete_extra_fine = $_POST["extra_fine"] + "|separator|" + htmlspecialchars($_POST["extra_fine_description"], ENT_QUOTES);
+                                $add_extra_income = "INSERT INTO `tbl_extra_income`(`id`, `received_date`, `particulars`, `amount`, `payment_mode`, `account_number`, `bank_name`, `branch_name`, `ifsc_code`, `transaction_no`, `received_from`, `remarks`, `post_at`, `status`) VALUES
+                                                                                 (NULL,'" . date('Y-m-d') . "','Extra Fine','$complete_extra_fine','$PaymentMode','$cashDepositTo','$bankName',' ','','$chequeAndOthersNumber','Extra Fine','$NotesByAdmin','" . date('Y-m-d') . "','$visible')";
+                                $extra_fine_result = mysqli_query($con, $add_extra_income);
+                            } else {
+                                $complete_extra_fine = "";
+                                if ($PaymentMode == "Cheque")
+                                    $FeeStatus = "pending";
+                            }
+        
+        
+                            // checking the fine exits or not into  the post variable
+                       
+                            for($i=0;$i<count($particular_paid_id);$i++){
+        
+                                if($particular_paid_amount[$i]!=='' ){
+                                      $fine_remaining_amount= $particular_fine_for_database[$particular_paid_id[$i]];
+            
+                                        $flag=1;
+            
+                                    }
+                            }
+                                if($flag===1){
+                                     $sql = "INSERT INTO `tbl_fee_paid`
+                                    (`feepaid_id`, `student_id`, `course_id`, `particular_id`, `paid_amount`, `rebate_amount`, `fine`,`remaining_fine`, `extra_fine`, `balance`, `payment_mode`, `cash_deposit_to`, `cash_date`, `notes`, `receipt_date`, `bank_name`, `transaction_no`, `transaction_date`, `receipt_no`, `paid_on`, `university_details_id`, `fee_paid_time`, `payment_status`, `status`) 
+                                    VALUES 
+                                    (NULL, '$registrationNumber', '$courseId', '$implodedId', '$implodedAmount', '$implodedRebate', '$fine_amount', '$fine_remaining_amount','$complete_extra_fine', '$remaining_amount', '$PaymentMode', '$cashDepositTo', '$paymentDate', '$NotesByAdmin', '$paidDate', '$bankName', '$chequeAndOthersNumber', '$paymentDate', 'SU_$receipt_no_gen', '$paymentDate', '$academicYear', '$date_variable_today_month_year_with_timing', '$FeeStatus', '$visible')
+                                    ";
+                                }else{
+                                     $implodedId =  ",".$_POST['fine_from'];
+                                    $implodedAmount = ",0";
+                                 echo   $fine_remaining_amount= $particular_fine_for_database[$_POST['fine_from']];
+            
+            
+                                     $sql = "INSERT INTO `tbl_fee_paid`
+                                            (`feepaid_id`, `student_id`, `course_id`, `particular_id`, `paid_amount`, `rebate_amount`, `fine`,`remaining_fine`, `extra_fine`, `balance`, `payment_mode`, `cash_deposit_to`, `cash_date`, `notes`, `receipt_date`, `bank_name`, `transaction_no`, `transaction_date`, `receipt_no`, `paid_on`, `university_details_id`, `fee_paid_time`, `payment_status`, `status`) 
+                                            VALUES 
+                                            (NULL, '$registrationNumber', '$courseId', '$implodedId', '$implodedAmount', '$implodedRebate', '$fine_amount','$fine_remaining_amount', '$complete_extra_fine', '$remaining_amount', '$PaymentMode', '$cashDepositTo', '$paymentDate', '$NotesByAdmin', '$paidDate', '$bankName', '$chequeAndOthersNumber', '$paymentDate', 'SU_$receipt_no_gen', '$paymentDate', '$academicYear', '$date_variable_today_month_year_with_timing', '$FeeStatus', '$visible')
+                                            ";
+            
+                                }
+        
+        
+        
+                        
+                            // getting the last inserted data of the fee paid
+                            $table_id_fee_paid = "SELECT * FROM `tbl_fee_paid` WHERE 1";
+                            $table_result = mysqli_query($con, $table_id_fee_paid);
+                            $table_feepaid_id_data = mysqli_fetch_array($table_result)['feepaid_id'];
+        
+                            //insert into tbl_income
+                            $sql_course = "SELECT * FROM `tbl_course`
+                                WHERE `status` = '$visible' &&  `course_id` = '" . $getRows["admission_course_name"] . "'
                                 ";
-                                
-                        //insert into tbl_income
-                        $sql_course = "SELECT * FROM `tbl_course`
-						WHERE `status` = '$visible' &&  `course_id` = '".$getRows["admission_course_name"]."'
-						";
-            			$result_course = $con->query($sql_course);
-            			$row_course = $result_course->fetch_assoc();
-            			
-            			$perticulars = explode(",",$implodedId);
-                        $amounts = explode(",",$implodedAmount);
-            			for($i=0; $i<count($perticulars); $i++){
-            			$sql_fee = "SELECT * FROM `tbl_fee`
-            						WHERE `status` = '$visible' && `fee_id` = '".$perticulars[$i]."'
-            						";
-            			$result_fee = $con->query($sql_fee);
-            			$row_fee = $result_fee->fetch_assoc();
-            															
-            			$sql_inc = "INSERT INTO `tbl_income`
-            				(`id`,`reg_no`,	`course`, `academic_year`,`received_date`, `particulars`, `amount`, `payment_mode`,`check_no`,`bank_name`,`income_from`,`post_at`) 
-            				VALUES
-            				('','$registrationNumber(Reg No)','$courseId',$academicYear,'$paidDate','".$row_fee["fee_particulars"]."','$amounts[$i]','$PaymentMode','$chequeAndOthersNumber','$bankName','Fee','".date("Y-m-d")."')
-            				";
-            			$query=mysqli_query($con,$sql_inc); }
-            			//end tbl_income
-			
-                        if($con->query($sql)){
-                            // $thanksMessage = " \n\nRegards,\nNetaji Subhas University, \nJamshedpur. ";
-                            // $objectSecond->send_otp($mobileNumberOfStudent, $thanksMessage);
-                            echo "success";
-                        }
-                        else
-                            echo '<div class="alert alert-danger alert-dismissible">
-                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                                    <i class="icon fas fa-ban"></i> Something Went Wrong Please Try Again!!!
-                                  </div>';
-                    } else
-                        echo '<div class="alert alert-danger alert-dismissible">
+                            $result_course = $con->query($sql_course);
+                            $row_course = $result_course->fetch_assoc();
+        
+                            $perticulars = explode(",", $implodedId);
+                            $amounts = explode(",", $implodedAmount);
+        
+                            if (isset($_POST["fine_amount"]) && ($_POST["fine_amount"] != '')) {
+                                $amount_extra =  $_POST["fine_amount"];
+                                $sql_inc = "INSERT INTO `tbl_income`
+                                    (`id`,`reg_no`,	`course`, `academic_year`,`received_date`, `particulars`, `amount`, `payment_mode`,`check_no`,`bank_name`,`income_from`,`post_at`,`table_name`,`table_id`) 
+                                    VALUES
+                                    (NULL,'$registrationNumber(Reg No)','$courseId',$academicYear,'$paidDate','Fine','$amount_extra','$PaymentMode','$chequeAndOthersNumber','$bankName','Fee','" . date("Y-m-d") . "','tbl_fee_paid','$table_feepaid_id_data')
+                                    ";
+                                $query = mysqli_query($con, $sql_inc);
+                            }
+        
+        
+                            for ($i = 0; $i < count($perticulars); $i++) {
+                                $sql_fee = "SELECT * FROM `tbl_fee`
+                                            WHERE `status` = '$visible' && `fee_id` = '" . $perticulars[$i] . "'
+                                            ";
+                                $result_fee = $con->query($sql_fee);
+                                $row_fee = $result_fee->fetch_assoc();
+        
+                                $sql_inc = "INSERT INTO `tbl_income`
+                                    (`id`,`reg_no`,	`course`, `academic_year`,`received_date`, `particulars`, `amount`, `payment_mode`,`check_no`,`bank_name`,`income_from`,`post_at`,`table_name`,`table_id`) 
+                                    VALUES
+                                    (NULL,'$registrationNumber(Reg No)','$courseId',$academicYear,'$paidDate','" . $row_fee["fee_particulars"] . "','$amounts[$i]','$PaymentMode','$chequeAndOthersNumber','$bankName','Fee','" . date("Y-m-d") . "','tbl_fee_paid','$table_feepaid_id_data')
+                                    ";
+                                $query = mysqli_query($con, $sql_inc);
+                            }
+                            //end tbl_income
+        
+                            if ($con->query($sql)) {
+                                // $thanksMessage = " \n\nRegards,\nNetaji Subhas University, \nJamshedpur. ";
+                                // $objectSecond->send_otp($mobileNumberOfStudent, $thanksMessage);
+                                echo '<div class="alert alert-success alert-dismissible">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                                <i class="icon fas fa-ban"></i> Cannot calculate Fees with <b>Negative</b> values!!!
-                              </div>';
+                                     <i class="icon fas fa-check-circle"></i> Fee Successfully paid 
+                                     </div>';
+                            } else
+                                echo '<div class="alert alert-danger alert-dismissible">
+                                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                            <i class="icon fas fa-ban"></i> Something Went Wrong Please Try Again!!!
+                                          </div>';
+                        } else
+                            echo '<div class="alert alert-danger alert-dismissible">
+                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                        <i class="icon fas fa-ban"></i> Cannot calculate Fees with <b>Negative</b> values!!!
+                                      </div>';
+                    } else
+                        echo '<div class="alert alert-warning alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                    <i class="icon fas fa-exclamation-triangle"></i> Please Fill out Payment Details!!!
+                                  </div>';
                 } else
-                    echo '<div class="alert alert-warning alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            <i class="icon fas fa-exclamation-triangle"></i> Please Fill out Payment Details!!!
-                          </div>';
-            } else
-                echo '<div class="alert alert-danger alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        <i class="icon fas fa-ban"></i> Please Fill Out Fee Amounts!!!
-                      </div>';
-        }
-        //Pay Fee End
+                    echo '<div class="alert alert-danger alert-dismissible">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                <i class="icon fas fa-ban"></i> Please Fill Out Fee Amounts!!!
+                              </div>';
+            }
+            //Pay Fee End
 		
 		//Delete Print Receipt Start With Ajax
         if($_POST["action"] == "delete_print_receipts"){

@@ -2574,933 +2574,7 @@
         }
 
         //Fetching Precious Fees Due Dates Start
-        if($_GET["action"] == "fetch_fees"){
-            $data = $_POST["data"];
-            ?>
-            <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>S.No</th>
-                        <th>Course Name</th>
-                        <th>Particulars</th>
-                        <th>Amount</th>
-                        <th>Fine</th>
-                        <th>Fee Last Date</th>
-                        <th>Status</th>
-                        <th class="project-actions text-center">Action </th>
-                    </tr>
-                </thead>
-                <tbody>         
-                   <?php 
-                        $sql = "SELECT * FROM `tbl_fee`
-                                WHERE `status` = '$visible' && `fee_academic_year` = '$data'
-                                ORDER BY `course_id` ASC
-                                ";
-                        $result = $con->query($sql);
-                        if($result->num_rows > 0){
-                        while($row = $result->fetch_assoc()){
-                            ?>
-                                <tr>
-                                    <td><?php echo $s_no; ?></td>
-                                    <?php 
-                                        $sql_course = "SELECT * FROM `tbl_course`
-                                                       WHERE `status` = '$visible' && `course_id` = '".$row["course_id"]."';
-                                                       ";
-                                        $result_course = $con->query($sql_course);
-                                        $row_course = $result_course->fetch_assoc();
-                                    ?>
-                                    <td><?php echo $row_course["course_name"]; ?></td>
-                                    <td><?php echo $row["fee_particulars"] ?></td>
-                                    <td><?php echo $row["fee_amount"] ?></td>
-                                    <td><?php echo $row["fee_fine"] ?></td>
-                                    <td><?php echo date("d-m-Y", strtotime($row["fee_lastdate"])) ?></td>
-                                    <td> <button type="button" id="edit_fee_status_button<?php echo $row["fee_id"]; ?>" class="btn <?php if($row["fee_astatus"] == "Active") echo "btn-success"; else echo "btn-warning" ?> btn-sm"><span id="loader_id<?php echo $row["fee_id"]; ?>"></span> <?php echo ($row["fee_astatus"] == "Active")?"active":"Inactive"; ?></button></td>
-                                    <td class="project-actions text-center">
-                                        <button class="btn btn-info btn-sm" onclick="document.getElementById('edit_fees<?php echo $row["fee_id"]; ?>').style.display='block'">
-                                            <i class="fas fa-pencil-alt">
-                                            </i>
-                                            Edit
-                                        </button>
-                                        <button class="btn btn-danger btn-sm" onclick="document.getElementById('delete_fees<?php echo $row["fee_id"]; ?>').style.display='block'">
-                                            <i class="fas fa-trash">
-                                            </i>
-                                            Delete
-                                        </button>
-                                    </td>
-                                    
-                                    <!-- Fees Edit Section Start -->
-                                    <div id="edit_fees<?php echo $row["fee_id"]; ?>" class="w3-modal" style="z-index:2020;">
-                                        <div class="w3-modal-content w3-animate-top w3-card-4" style="width:40%">
-                                            <header class="w3-container" style="background:#343a40; color:white;">
-                                                <span onclick="document.getElementById('edit_fees<?php echo $row["fee_id"]; ?>').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                                                <h2 align="center">Edit Fee</h2>
-                                            </header>
-                                            <form id="edit_fee_form<?php echo $row["fee_id"]; ?>" role="form" method="POST">
-                                                <div class="card-body">
-                                                    <div class="col-md-12" id="edit_error_section<?php echo $row["fee_id"]; ?>"></div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="form-group">
-                                                                <label>Course Name</label>
-                                                                <select name="" id="edit_fee_course_name<?php echo $row["fee_id"]; ?>" class="form-control">
-                                                                   <?php
-                                                                        $sql_c = "SELECT * FROM `tbl_course`
-                                                                                       WHERE `status` = '$visible';
-                                                                                       ";
-                                                                        $result_c = $con->query($sql_c);
-                                                                        while($row_c = $result_c->fetch_assoc()){
-                                                                    ?>
-                                                                    <option value="<?php echo $row_c["course_id"]; ?>" <?php if($row_c["course_id"] == $row_course["course_id"]) echo 'selected'; ?> ><?php echo $row_c["course_name"]; ?></option>
-                                                                    <?php } ?>
-                                                                </select>
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Particular</label>
-                                                                <input type="text" name="" id="edit_fee_particulars<?php echo $row["fee_id"]; ?>" class="form-control" value="<?php echo $row["fee_particulars"]; ?>">
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Amount</label>
-                                                                <input type="text" name="" id="edit_fee_amount<?php echo $row["fee_id"]; ?>" class="form-control" value="<?php echo $row["fee_amount"]; ?>">
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Fine</label>
-                                                                <input type="text" name="" id="edit_fee_fine<?php echo $row["fee_id"]; ?>" class="form-control" value="<?php echo $row["fee_fine"]; ?>">
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Fee Last Date</label>
-                                                                <input type="date" name="" id="edit_fee_latedate<?php echo $row["fee_id"]; ?>" class="form-control" value="<?php echo $row["fee_lastdate"]; ?>">
-                                                            </div>
-
-                                                        </div>
-
-                                                    </div>
-                                                    <input type='hidden' name='edit_fee_id' id="edit_fee_id<?php echo $row["fee_id"]; ?>" value='<?php echo $row["fee_id"]; ?>' />
-                                                    <input type='hidden' name='edit_fee_status' id="edit_fee_status<?php echo $row["fee_id"]; ?>" value='<?php echo $row["fee_astatus"] ?>' />
-                                                    <input type='hidden' name='action' id="action<?php echo $row["fee_id"]; ?>" value='edit_fees' />
-                                                    <div class="col-md-12" id="edit_loader_section<?php echo $row["fee_id"]; ?>"></div>
-                                                    <button type="button" id="edit_fee_button<?php echo $row["fee_id"]; ?>" class="btn btn-primary">Update</button>
-                                                    <!--<button type="reset" class="btn btn-danger">Reset</button>-->
-                                                </div>
-                                            </form>
-                                            <script>
-                                                $(function() {
-                                                    $('#edit_fee_status_button<?php echo $row["fee_id"]; ?>').click(function() {
-                                                        $('#loader_id<?php echo $row["fee_id"]; ?>').append('<img id = "edit_load" width="20px" src = "images/ajax-loader.gif" alt="Currently loading" />');
-                                                        $('#edit_fee_status_button<?php echo $row["fee_id"]; ?>').prop('disabled', true);
-                                                        var action = $("#action<?php echo $row["fee_id"]; ?>").val();
-                                                        var edit_fee_id = $("#edit_fee_id<?php echo $row["fee_id"]; ?>").val();
-                                                        var edit_fee_status = $("#edit_fee_status<?php echo $row["fee_id"]; ?>").val();
-                    
-                                                        var dataString = 'action='+ action + '&edit_fee_id='+ edit_fee_id + '&edit_fee_status='+ edit_fee_status;
-
-                                                        $.ajax({
-                                                            url: 'include/controller.php',
-                                                            type: 'POST',
-                                                            data: dataString,
-                                                            success: function(result) {
-                                                                console.log(result);
-                                                                showUpdatedData();
-                                                                function showUpdatedData(){
-                                                                    $.ajax({
-                                                                        url: 'include/view.php?action=fetch_fees',
-                                                                        type: 'POST',
-                                                                        data: $('#feeDetailsForm').serializeArray(),
-                                                                        success: function(result) {
-                                                                            $('#response').remove();
-                                                                            $('#data_table').append('<div id = "response">' + result + '</div>');
-                                                                        }
-                                                                    });
-                                                                }
-                                                                $('#loader_id<?php echo $row["fee_id"]; ?>').fadeOut(500, function() {
-                                                                    $(this).remove();
-                                                                    $('#edit_fee_status_button<?php echo $row["fee_id"]; ?>').prop('disabled', false);
-                                                                });
-                                                                
-                                                            }
-
-                                                        });
-                                                        
-                                                    });
-                                                    $('#edit_fee_button<?php echo $row["fee_id"]; ?>').click(function() {
-                                                        $('#edit_loader_section<?php echo $row["fee_id"]; ?>').append('<center id = "edit_loading"><img width="50px" src = "images/ajax-loader.gif" alt="Currently loading" /></center>');
-                                                        $('#edit_fee_button<?php echo $row["fee_id"]; ?>').prop('disabled', true);
-                                                        var action = $("#action<?php echo $row["fee_id"]; ?>").val();
-                                                        var edit_fee_id = $("#edit_fee_id<?php echo $row["fee_id"]; ?>").val();
-                                                        var edit_fee_course_name = $("#edit_fee_course_name<?php echo $row["fee_id"]; ?>").val();
-                                                        var edit_fee_particulars = $("#edit_fee_particulars<?php echo $row["fee_id"]; ?>").val();
-                                                        var edit_fee_amount = $("#edit_fee_amount<?php echo $row["fee_id"]; ?>").val();
-                                                        var edit_fee_fine = $("#edit_fee_fine<?php echo $row["fee_id"]; ?>").val();
-                                                        var edit_fee_latedate = $("#edit_fee_latedate<?php echo $row["fee_id"]; ?>").val();
-                                                        
-                                                        var dataString = 'action='+ action + '&edit_fee_id='+ edit_fee_id + '&edit_fee_course_name='+ edit_fee_course_name + '&edit_fee_particulars='+ edit_fee_particulars + '&edit_fee_amount='+ edit_fee_amount+ '&edit_fee_fine='+ edit_fee_fine+ '&edit_fee_latedate='+ edit_fee_latedate;
-
-                                                        $.ajax({
-                                                            url: 'include/controller.php',
-                                                            type: 'POST',
-                                                            data: dataString,
-                                                            success: function(result) {
-                                                                $('#edit_response').remove();
-                                                                if(result == "exsits"){
-                                                                    $('#edit_error_section<?php echo $row["fee_id"]; ?>').append('<div id = "edit_response"><div class="alert alert-warning alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-exclamation-triangle"></i> This Fee Details have already exsits!!!</div></div>');
-                                                                }
-                                                                if(result == "error"){
-                                                                    $('#edit_error_section<?php echo $row["fee_id"]; ?>').append('<div id = "edit_response"><div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-ban"></i> Something went wrong please try again!!!</div></div>');
-                                                                }
-                                                                if(result == "empty"){
-                                                                    $('#edit_error_section<?php echo $row["fee_id"]; ?>').append('<div id = "edit_response"><div class="alert alert-warning alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-exclamation-triangle"></i>  Please fill out required Fields!!!</div></div>');
-                                                                }
-                                                                if(result == "success"){
-                                                                    $('#edit_error_section<?php echo $row["fee_id"]; ?>').append('<div id = "edit_response"><div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-check"></i> Fee Details Updated successfully!!!</div></div>');
-                                                                    showUpdatedData();
-                                                                    function showUpdatedData(){
-                                                                        $.ajax({
-                                                                            url: 'include/view.php?action=fetch_fees',
-                                                                            type: 'POST',
-                                                                            data: $('#feeDetailsForm').serializeArray(),
-                                                                            success: function(result) {
-                                                                                $('#response').remove();
-                                                                                $('#data_table').append('<div id = "response">' + result + '</div>');
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                }
-                                                                $('#edit_loading').fadeOut(500, function() {
-                                                                    $(this).remove();
-                                                                });
-                                                                $('#edit_fee_button<?php echo $row["fee_id"]; ?>').prop('disabled', false);
-                                                            }
-
-                                                        });
-                                                        
-                                                    });
-
-                                                });
-
-                                            </script>
-                                        </div>
-                                    </div>
-                                    <!-- Fees Edit Section End -->
-                        
-                                    <!-- Fees delete Section Start -->
-                                    <div id="delete_fees<?php echo $row["fee_id"]; ?>" class="w3-modal" style="z-index:2020;">
-                                        <div class="w3-modal-content w3-animate-top w3-card-4" style="width:40%">
-                                            <header class="w3-container" style="background:#343a40; color:white;">
-                                                <span onclick="document.getElementById('delete_fees<?php echo $row["fee_id"]; ?>').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                                                <h2 align="center">Are you sure???</h2>
-                                            </header>
-                                            <form id="delete_fee_form<?php echo $row["fee_id"]; ?>" role="form" method="POST">
-                                                <div class="card-body">
-                                                    <div class="col-md-12" id="delete_error_section<?php echo $row["fee_id"]; ?>"></div>
-                                                    <div class="col-md-12" align="center">
-                                                        <input type='hidden' name='delete_fee_id' id="delete_fee_id<?php echo $row["fee_id"]; ?>" value='<?php echo $row["fee_id"]; ?>' />
-                                                        <input type='hidden' name='action' id="action_delete<?php echo $row["fee_id"]; ?>" value='delete_fees' />
-                                                        <div class="col-md-12" id="delete_loader_section<?php echo $row["fee_id"]; ?>"></div>
-                                                        <button type="button" id="delete_fee_button<?php echo $row["fee_id"]; ?>" class="btn btn-danger">Move To Trash</button>
-                                                        <button type="button" onclick="document.getElementById('delete_fees<?php echo $row["fee_id"]; ?>').style.display='none'" class="btn btn-primary">Cancel</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                            
-                                            <script>
-                                                $(function() {
-                                                    $('#delete_fee_button<?php echo $row["fee_id"]; ?>').click(function() {
-                                                        $('#delete_loader_section<?php echo $row["fee_id"]; ?>').append('<center id = "delete_loading"><img width="50px" src = "images/ajax-loader.gif" alt="Currently loading" /><br/><br/></center>');
-                                                        $('#delete_fee_button<?php echo $row["fee_id"]; ?>').prop('disabled', true);
-                                                        var action = $("#action_delete<?php echo $row["fee_id"]; ?>").val();
-                                                        var delete_fee_id = $("#delete_fee_id<?php echo $row["fee_id"]; ?>").val();
-                                                        var dataString = 'action='+ action + '&delete_fee_id='+ delete_fee_id;
-
-                                                        $.ajax({
-                                                            url: 'include/controller.php',
-                                                            type: 'POST',
-                                                            data: dataString,
-                                                            success: function(result) {
-                                                                $('#delete_response').remove();
-                                                                if(result == "error"){
-                                                                    $('#delete_error_section<?php echo $row["fee_id"]; ?>').append('<div id = "delete_response"><div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-ban"></i> Something went wrong please try again!!!</div></div>');
-                                                                }
-                                                                if(result == "empty"){
-                                                                    $('#delete_error_section<?php echo $row["fee_id"]; ?>').append('<div id = "delete_response"><div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-ban"></i> Something went wrong please try again!!!</div></div>');
-                                                                }
-                                                                if(result == "success"){
-                                                                    $('#delete_error_section<?php echo $row["fee_id"]; ?>').append('<div id = "delete_response"><div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-check"></i> Fee Delete successfully!!!</div></div>');
-                                                                    showUpdatedData();
-                                                                    function showUpdatedData(){
-                                                                        $.ajax({
-                                                                            url: 'include/view.php?action=fetch_fees',
-                                                                            type: 'POST',
-                                                                            data: $('#feeDetailsForm').serializeArray(),
-                                                                            success: function(result) {
-                                                                                $('#response').remove();
-                                                                                $('#data_table').append('<div id = "response">' + result + '</div>');
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                }
-                                                                console.log(result);
-                                                                $('#delete_loading').fadeOut(500, function() {
-                                                                    $(this).remove();
-                                                                });
-                                                                $('#delete_fee_button<?php echo $row["fee_id"]; ?>').prop('disabled', false);
-                                                            }
-
-                                                        });
-                                                    });
-
-                                                });
-
-                                            </script>
-                                        </div>
-                                    </div>
-                                    <!-- Fees delete Section End -->
-                                </tr>
-                            <?php 
-                                $s_no++;
-                            }
-                        } else
-                            echo '
-                                <div class="alert alert-warning alert-dismissible">
-                                    <i class="icon fas fa-exclamation-triangle"></i>  No data available now!!!
-                                </div>';
-                    ?>
-                </tbody>
-            </table> 
-            <script>
-                $(function() {
-                    $("#example1").DataTable();
-                    $('#example2').DataTable({
-                        "paging": true,
-                        "lengthChange": false,
-                        "searching": false,
-                        "ordering": true,
-                        "info": true,
-                        "autoWidth": false,
-                    });
-                });
-
-            </script>
-        <?php       
-        }
-        //Fetching Precious Fees Due Dates Start
-        if($_GET["action"] == "fetch_student_list_details"){
-            $course_id = $_POST["course_id"];
-            $academic_year = $_POST["academic_year"];
-            if($academic_year != 0){
-            ?>
-            <div class="card">
-                <div class="card-header card-warning">
-                    <form method="POST" action="export-list">
-                        <input type="hidden" name="course_id" value="<?php echo $course_id; ?>" />
-                        <input type="hidden" name="academic_year" value="<?php echo $academic_year; ?>" />
-                        <input type="hidden" name="action" value="export_student_details" />
-                        <button type="submit" class="btn btn-warning pull-right float-right"><i class="fa fa-download"></i> Export All</button>
-                    </form>
-                </div>
-            </div>
-            <table id="example1" class="table table-bordered table-striped" style="overflow-x:auto;">
-                <thead>
-                    <tr>
-                         <th width="10%">S.No</th>
-                        <th  width="10%">Reg. No</th>
-                        <th width="10%">Student Name</th>
-                        <th width="10%">Course</th>
-                        <th width="10%">Father Name</th>
-                        <th width="10%">Mother Name</th>
-                        <th width="10%">Student Contact No.</th>
-                        <th width="10%">Father Contact No.</th>
-                        <th width="10%">Father Whatsapp No.</th>
-                        <th width="10%">DOB</th>
-                        <th width="10%">Gender</th>
-                        <!--<th width="10%">Mobile No.</th>-->
-                        <th class="project-actions text-center">Action </th>
-                    </tr>
-                </thead>
-                <tbody>         
-                   <?php 
-                        if($course_id == "all")
-                            $sql = "SELECT * FROM `tbl_admission`
-                                    WHERE `status` = '$visible' && `admission_session` = '$academic_year'
-                                    ORDER BY `admission_id` ASC
-                                    ";
-                        else
-                            $sql = "SELECT * FROM `tbl_admission`
-                                    WHERE `status` = '$visible' && `admission_session` = '$academic_year' && `admission_course_name` = '$course_id'
-                                    ORDER BY `admission_id` ASC
-                                    ";
-                        $result = $con->query($sql);
-                        if($result->num_rows > 0){
-                        while($row = $result->fetch_assoc()){
-                           $orgDate = $row["admission_dob"];
-                            $newDate = date("d-m-Y", strtotime($orgDate));
-                            ?>
-                                <tr>
-                                    <td><?php echo $s_no; ?></td>
-                                    <?php 
-                                        $sql_course = "SELECT * FROM `tbl_course`
-                                                       WHERE `status` = '$visible' && `course_id` = '".$row["admission_course_name"]."';
-                                                       ";
-                                        $result_course = $con->query($sql_course);
-                                        $row_course = $result_course->fetch_assoc();
-                                    ?>
-                                     <td><?php echo $row["admission_id"] ?></td>
-                                      <td><?php echo $row["admission_first_name"] ?> <?php echo $row["admission_middle_name"] ?> <?php echo $row["admission_last_name"] ?></td>
-                                    <td><?php echo $row_course["course_name"]; ?></td>
-                                    <td><?php echo $row["admission_father_name"] ?></td>
-                                   <td><?php echo $row["admission_mother_name"] ?></td>
-                                 <td><?php echo $row["admission_mobile_student"]; ?></td>
-                                  <td><?php echo $row["admission_father_phoneno"]; ?></td>
-                                  <td><?php echo $row["admission_father_whatsappno"]; ?></td>
-                                    <td><?php echo $newDate; ?></td>
-                                    <td><?php echo $row["admission_gender"]; ?></td>
-                                    <!--<td><?php //echo $row["admission_mobile_student"]; ?></td>-->
-                                    <td class="project-actions text-center" id="row_id_<?=$row['admission_id']?>">
-                                         <button class="btn btn-info btn-sm" onclick="document.getElementById('view_student_lists<?php echo $row["admission_id"]; ?>').style.display='block'">
-                                            <i class="fas fa-eye">
-                                            </i>
-                                            
-                                        </button>
-                                        <!--<button class="btn btn-info btn-sm" onclick="document.getElementById('edit_student_lists<?php echo $row["admission_id"]; ?>').style.display='block'">
-                                            <i class="fas fa-pencil-alt">
-                                            </i>
-                                            Edit
-                                        </button>-->
-                                        <a href="edit_student?id=<?php echo $row['admission_id'];?>"><button class="update btn btn-warning btn-sm"><i class="fas fa-pencil-alt">
-                                            </i>
-                                            </span></button></a>
-                                        <button class="btn btn-danger btn-sm" onclick="document.getElementById('delete_student_lists<?php echo $row["admission_id"]; ?>').style.display='block'">
-                                            <i class="fas fa-trash">
-                                            </i>
-                                            
-                                        </button>
-                                        
-                                         <button onclick="update_status(<?=$row['admission_id']?>,<?=$row['stud_status']?>)" class="btn btn-<?=($row['stud_status']==1?'success':'danger')?>"><?=($row['stud_status']==1?'Active':'Inactive')?></button>
-                                    </td>
-                                    
-                                    <!-- Fees Edit Section Start -->
-                                    <div id="edit_student_lists<?php echo $row["admission_id"]; ?>" class="w3-modal" style="z-index:2020;">
-                                        <div class="w3-modal-content w3-animate-top w3-card-4" style="width:40%">
-                                            <header class="w3-container" style="background:#343a40; color:white;">
-                                                <span onclick="document.getElementById('edit_student_lists<?php echo $row["admission_id"]; ?>').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                                                <h2 align="center">Edit Fee</h2>
-                                            </header>
-                                            <form id="edit_student_list_form<?php echo $row["admission_id"]; ?>" role="form" method="POST">
-                                                <div class="card-body">
-                                                    <div class="col-md-12" id="edit_error_section<?php echo $row["admission_id"]; ?>"></div>
-                                                    <div class="row">
-                                                       <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Registration Number</label>
-                                                                <input type="text" name="" id="edit_student_list_reg_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_id"]; ?>" readonly />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Admission Number</label>
-                                                                <input type="text" name="" id="edit_student_list_admission_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_no"]; ?>" readonly />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Course Name</label>
-                                                                <select name="" id="edit_student_list_course_name<?php echo $row["admission_id"]; ?>" class="form-control">
-                                                                   <?php
-                                                                        $sql_c = "SELECT * FROM `tbl_course`
-                                                                                       WHERE `status` = '$visible';
-                                                                                       ";
-                                                                        $result_c = $con->query($sql_c);
-                                                                        while($row_c = $result_c->fetch_assoc()){
-                                                                    ?>
-                                                                    <option value="<?php echo $row_c["course_id"]; ?>" <?php if($row_c["course_id"] == $row_course["course_id"]) echo 'selected'; ?> ><?php echo $row_c["course_name"]; ?></option>
-                                                                    <?php } ?>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Session</label>
-                                                                <select name="" id="edit_student_list_session<?php echo $row["admission_id"]; ?>" class="form-control">
-                                                                   <?php
-                                                                        $sql_c = "SELECT * FROM `tbl_university_details`
-                                                                                       WHERE `status` = '$visible';
-                                                                                       ";
-                                                                        $result_c = $con->query($sql_c);
-                                                                        while($row_c = $result_c->fetch_assoc()){
-                                                                    ?>
-                                                                    <option value="<?php echo $row_c["university_details_id"]; ?>" <?php if($row_c["university_details_id"] == $row["admission_session"]) echo 'selected'; ?> ><?php echo $row_c["university_details_academic_start_date"]; ?> to <?php echo $row_c["university_details_academic_end_date"]; ?></option>
-                                                                    <?php } ?>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>First Name</label>
-                                                                <input type="text" name="" id="edit_student_list_first_name<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_first_name"]; ?>" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Last Name</label>
-                                                                <input type="text" name="" id="edit_student_list_last_name<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_last_name"]; ?>" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Contact No</label>
-                                                                <input type="text" name="" id="edit_student_list_contact_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_mobile_student"]; ?>" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Email</label>
-                                                                <input type="text" name="" id="edit_student_list_email<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_emailid_student"]; ?>" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Father's Name</label>
-                                                                <input type="text" name="" id="edit_student_list_fathers_name<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_father_name"]; ?>" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Contact No</label>
-                                                                <input type="text" name="" id="edit_student_list_fathers_contact<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_father_phoneno"]; ?>" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Hostel</label>
-                                                                <select name="" id="edit_student_list_hostel<?php echo $row["admission_id"]; ?>" class="form-control">
-                                                                    <option <?php if($row["admission_hostel"] == "Yes") echo "selected"; ?> value="Yes">Yes</option>
-                                                                    <option <?php if($row["admission_hostel"] == "No") echo "selected"; ?>  value="No">No</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Transport</label>
-                                                                <select name="" id="edit_student_list_transport<?php echo $row["admission_id"]; ?>" class="form-control">
-                                                                    <option <?php if($row["admission_transport"] == "Yes") echo "selected"; ?> value="Yes">Yes</option>
-                                                                    <option <?php if($row["admission_transport"] == "No") echo "selected"; ?>  value="No">No</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Username</label>
-                                                                <input type="text" name="" id="edit_student_list_username<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_username"]; ?>" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Password</label>
-                                                                <input type="text" name="" id="edit_student_list_password<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_password"]; ?>" />
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                    <input type='hidden' name='edit_admission_id' id="edit_admission_id<?php echo $row["admission_id"]; ?>" value='<?php echo $row["admission_id"]; ?>' />
-                                                    <input type='hidden' name='action' id="action_student<?php echo $row["admission_id"]; ?>" value='edit_student_lists' />
-                                                    <div class="col-md-12" id="edit_loader_section<?php echo $row["admission_id"]; ?>"></div>
-                                                    <button type="button" id="edit_student_list_button<?php echo $row["admission_id"]; ?>" class="btn btn-primary">Update</button>
-                                                    <!--<button type="reset" class="btn btn-danger">Reset</button>-->
-                                                </div>
-                                            </form>
-                                            <script>
-                                            
-                                            function update_status(id,status){
-                                            //   alert('working');
-                                            //   alert(id);
-                                            //   alert(status); exit;
-                                                  $.ajax({
-                                                    type: "POST",
-                                                    url: 'include/controller.php',
-                                                    data:{"action":"student_status_update","id":id,"status":status},
-                                                    success: function(data){
-                                                     if(data == "success"){
-                                                          $("#row_id_"+id).html(data);
-                                                        //  $('#status_response').remove();
-                                                        //     $('#edit_error_section<?php echo $row["admission_id"]; ?>').append('<div id = "status_response"><div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-check"></i> Status Updated successfully!!!</div></div>');
-                                                                  
-                                                                }                                                    
-                                                        
-                                                    }
-                                                
-                                                });
-                                            }
-                                            
-                                                $(function() {
-
-                                                    $('#edit_student_list_button<?php echo $row["admission_id"]; ?>').click(function() {
-                                                        $('#edit_loader_section<?php echo $row["admission_id"]; ?>').append('<center id = "edit_loading"><img width="50px" src = "images/ajax-loader.gif" alt="Currently loading" /></center>');
-                                                        $('#edit_student_list_button<?php echo $row["admission_id"]; ?>').prop('disabled', true);
-                                                        var action = $("#action_student<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_admission_id = $("#edit_admission_id<?php echo $row["admission_id"]; ?>").val();
-                                                        
-                                                        var edit_student_list_reg_no = $("#edit_student_list_reg_no<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_student_list_admission_no = $("#edit_student_list_admission_no<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_student_list_course_name = $("#edit_student_list_course_name<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_student_list_session = $("#edit_student_list_session<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_student_list_first_name = $("#edit_student_list_first_name<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_student_list_last_name = $("#edit_student_list_last_name<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_student_list_contact_no = $("#edit_student_list_contact_no<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_student_list_email = $("#edit_student_list_email<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_student_list_fathers_name = $("#edit_student_list_fathers_name<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_student_list_fathers_contact = $("#edit_student_list_fathers_contact<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_student_list_hostel = $("#edit_student_list_hostel<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_student_list_transport = $("#edit_student_list_transport<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_student_list_username = $("#edit_student_list_username<?php echo $row["admission_id"]; ?>").val();
-                                                        var edit_student_list_password = $("#edit_student_list_password<?php echo $row["admission_id"]; ?>").val();
-                                                        
-                                                        var dataString = 'action='+ action + '&edit_admission_id='+ edit_admission_id + '&edit_student_list_reg_no='+ edit_student_list_reg_no+ '&edit_student_list_admission_no='+ edit_student_list_admission_no+ '&edit_student_list_course_name='+ edit_student_list_course_name+ '&edit_student_list_session='+ edit_student_list_session+ '&edit_student_list_first_name='+ edit_student_list_first_name+ '&edit_student_list_last_name='+ edit_student_list_last_name+ '&edit_student_list_contact_no='+ edit_student_list_contact_no+ '&edit_student_list_email='+ edit_student_list_email+ '&edit_student_list_fathers_name='+ edit_student_list_fathers_name+ '&edit_student_list_fathers_contact='+ edit_student_list_fathers_contact+ '&edit_student_list_hostel='+ edit_student_list_hostel+ '&edit_student_list_transport='+ edit_student_list_transport+ '&edit_student_list_username='+ edit_student_list_username+ '&edit_student_list_password='+ edit_student_list_password;
-
-                                                        $.ajax({
-                                                            url: 'include/controller.php',
-                                                            type: 'POST',
-                                                            data: dataString,
-                                                            success: function(result) {
-                                                                console.log(result);
-                                                                $('#edit_response').remove();
-                                                                if(result == "exsits"){
-                                                                    $('#edit_error_section<?php echo $row["admission_id"]; ?>').append('<div id = "edit_response"><div class="alert alert-warning alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-exclamation-triangle"></i> This Fee Details have already exsits!!!</div></div>');
-                                                                }
-                                                                if(result == "error"){
-                                                                    $('#edit_error_section<?php echo $row["admission_id"]; ?>').append('<div id = "edit_response"><div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-ban"></i> Something went wrong please try again!!!</div></div>');
-                                                                }
-                                                                if(result == "empty"){
-                                                                    $('#edit_error_section<?php echo $row["admission_id"]; ?>').append('<div id = "edit_response"><div class="alert alert-warning alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-exclamation-triangle"></i>  Please fill out required Fields!!!</div></div>');
-                                                                }
-                                                                if(result == "success"){
-                                                                    $('#edit_error_section<?php echo $row["admission_id"]; ?>').append('<div id = "edit_response"><div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-check"></i> Fee Details Updated successfully!!!</div></div>');
-                                                                    showUpdatedData();
-                                                                    function showUpdatedData(){
-                                                                        $.ajax({
-                                                                            url: 'include/view.php?action=fetch_student_list_details',
-                                                                            type: 'POST',
-                                                                            data: $('#fetchStudentDataForm').serializeArray(),
-                                                                            success: function(result) {
-                                                                                $('#response').remove();
-                                                                                $('#data_table').append('<div id = "response">' + result + '</div>');
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                }
-                                                                $('#edit_loading').fadeOut(500, function() {
-                                                                    $(this).remove();
-                                                                });
-                                                                $('#edit_student_list_button<?php echo $row["admission_id"]; ?>').prop('disabled', false);
-                                                            }
-
-                                                        });
-                                                        
-                                                    });
-
-                                                });
-
-                                            </script>
-                                        </div>
-                                    </div>
-                                    <!-- Fees Edit Section End -->
-                                    
-                                    <!-- Student List view Section Start -->
-                                    <div id="view_student_lists<?php echo $row["admission_id"]; ?>" class="w3-modal" style="z-index:2020;">
-                                        <div class="w3-modal-content w3-animate-top w3-card-4" style="width:70%">
-                                            <header class="w3-container" style="background:#343a40; color:white;">
-                                                <span onclick="document.getElementById('view_student_lists<?php echo $row["admission_id"]; ?>').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                                                <h2 align="center">Student Details</h2>
-                                            </header>
-                                            <form id="view_student_list_form<?php echo $row["admission_id"]; ?>" role="form" method="POST">
-                                                <div class="card-body" style="margin-bottom: 50px;">
-                                                    <div class="col-md-12" id="edit_error_section<?php echo $row["admission_id"]; ?>"></div>
-                                                    <div class="row">
-                                                       <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Registration Number</label>
-                                                                <input type="text" name="" id="edit_student_list_reg_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_id"]; ?>" readonly />
-                                                            </div>
-                                                        </div>
-                                                         <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Prospectus Number</label>
-                                                                <input type="text" name="" id="edit_student_list_reg_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_form_no"]; ?>" readonly />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Admission Number</label>
-                                                                <input type="text" name="" id="edit_student_list_admission_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_no"]; ?>" readonly />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Course Name</label>
-                                                                <select name="" id="edit_student_list_course_name<?php echo $row["admission_id"]; ?>" class="form-control" readonly>
-                                                                   <?php
-                                                                        $sql_c = "SELECT * FROM `tbl_course`
-                                                                                       WHERE `status` = '$visible';
-                                                                                       ";
-                                                                        $result_c = $con->query($sql_c);
-                                                                        while($row_c = $result_c->fetch_assoc()){
-                                                                    ?>
-                                                                    <option value="<?php echo $row_c["course_id"]; ?>" <?php if($row_c["course_id"] == $row_course["course_id"]) echo 'selected'; ?> ><?php echo $row_c["course_name"]; ?></option>
-                                                                    <?php } ?>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Session</label>
-                                                                <select name="" id="edit_student_list_session<?php echo $row["admission_id"]; ?>" class="form-control" readonly>
-                                                                   <?php
-                                                                        $sql_c = "SELECT * FROM `tbl_university_details`
-                                                                                       WHERE `status` = '$visible';
-                                                                                       ";
-                                                                        $result_c = $con->query($sql_c);
-                                                                        while($row_c = $result_c->fetch_assoc()){
-                                                                    ?>
-                                                                    <option value="<?php echo $row_c["university_details_id"]; ?>" <?php if($row_c["university_details_id"] == $row["admission_session"]) echo 'selected'; ?> ><?php echo $row_c["university_details_academic_start_date"]; ?> to <?php echo $row_c["university_details_academic_end_date"]; ?></option>
-                                                                    <?php } ?>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Student Name</label>
-                                                                <input type="text" name="" id="edit_student_list_first_name<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_first_name"]; ?>&nbsp;&nbsp;<?php echo $row["admission_middle_name"]; ?>&nbsp;&nbsp;<?php echo $row["admission_last_name"]; ?>" readonly />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>DOB</label>
-                                                                <input type="text" name="" id="edit_student_list_contact_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_dob"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>
-                                                         <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Nationality</label>
-                                                                <input type="text" name="" id="edit_student_list_contact_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_nationality"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>
-                                                         <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Adhar No</label>
-                                                                <input type="text" name="" id="edit_student_list_contact_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_aadhar_no"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>
-                                                         <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Date Of Admission</label>
-                                                                <input type="text" name="" id="edit_student_list_contact_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["date_of_admission"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>
-                                                         <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Category</label>
-                                                                <input type="text" name="" id="edit_student_list_contact_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_category"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Gender</label>
-                                                                <input type="text" name="" id="edit_student_list_contact_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_gender"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Username</label>
-                                                                <input type="text" name="" id="edit_student_list_contact_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_username"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Password</label>
-                                                                <input type="text" name="" id="edit_student_list_contact_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_password"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Blood Group</label>
-                                                                <input type="text" name="" id="edit_student_list_contact_no<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_blood_group"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Hostel</label>
-                                                                <input type="text" name="" id="edit_student_list_email<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_hostel"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>
-                                                         <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Transport</label>
-                                                                <input type="text" name="" id="edit_student_list_email<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_transport"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Image</label>
-                                                                <img src="images/student_images/<?php echo $row["admission_profile_image"]; ?>" style="height:100%">
-                                                            </div>
-                                                        </div>
-                                                         <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Student Contact No</label>
-                                                                <input type="text" name="" id="edit_student_list_fathers_contact<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_mobile_student"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>  
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Student EmailID</label>
-                                                                <input type="text" name="" id="edit_student_list_fathers_contact<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_emailid_student"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>  
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Father's Name</label>
-                                                                <input type="text" name="" id="edit_student_list_fathers_name<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_father_name"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Father Contact No</label>
-                                                                <input type="text" name="" id="edit_student_list_fathers_contact<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_father_phoneno"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>  
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Mother's Name</label>
-                                                                <input type="text" name="" id="edit_student_list_fathers_name<?php echo $row["admission_id"]; ?>" class="form-control" value="<?php echo $row["admission_mother_name"]; ?>" readonly/>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </form>
-                                 
-                                        </div>
-                                    </div>
-                                    <!-- student list view Section End -->
-                                    
-                                    <!-- Fees delete Section Start -->
-                                    <div id="delete_student_lists<?php echo $row["admission_id"]; ?>" class="w3-modal" style="z-index:2020;">
-                                        <div class="w3-modal-content w3-animate-top w3-card-4" style="width:40%">
-                                            <header class="w3-container" style="background:#343a40; color:white;">
-                                                <span onclick="document.getElementById('delete_student_lists<?php echo $row["admission_id"]; ?>').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                                                <h2 align="center">Are you sure???</h2>
-                                            </header>
-                                            <form id="delete_student_list_form<?php echo $row["admission_id"]; ?>" role="form" method="POST">
-                                                <div class="card-body">
-                                                    <div class="col-md-12" id="delete_error_section<?php echo $row["admission_id"]; ?>"></div>
-                                                    <div class="col-md-12" align="center">
-                                                        <input type='hidden' name='delete_admission_id' id="delete_admission_id<?php echo $row["admission_id"]; ?>" value='<?php echo $row["admission_id"]; ?>' />
-                                                        <input type='hidden' name='action' id="action_delete<?php echo $row["admission_id"]; ?>" value='delete_student_lists' />
-                                                        <div class="col-md-12" id="delete_loader_section<?php echo $row["admission_id"]; ?>"></div>
-                                                        <button type="button" id="delete_student_list_button<?php echo $row["admission_id"]; ?>" class="btn btn-danger">Move To Trash</button>
-                                                        <button type="button" onclick="document.getElementById('delete_student_lists<?php echo $row["admission_id"]; ?>').style.display='none'" class="btn btn-primary">Cancel</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                            
-                                            <script>
-                                                $(function() {
-                                                    $('#delete_student_list_button<?php echo $row["admission_id"]; ?>').click(function() {
-                                                        $('#delete_loader_section<?php echo $row["admission_id"]; ?>').append('<center id = "delete_loading"><img width="50px" src = "images/ajax-loader.gif" alt="Currently loading" /><br/><br/></center>');
-                                                        $('#delete_student_list_button<?php echo $row["admission_id"]; ?>').prop('disabled', true);
-                                                        var action = $("#action_delete<?php echo $row["admission_id"]; ?>").val();
-                                                        var delete_admission_id = $("#delete_admission_id<?php echo $row["admission_id"]; ?>").val();
-                                                        var dataString = 'action='+ action + '&delete_admission_id='+ delete_admission_id;
-
-                                                        $.ajax({
-                                                            url: 'include/controller.php',
-                                                            type: 'POST',
-                                                            data: dataString,
-                                                            success: function(result) {
-                                                                $('#delete_response').remove();
-                                                                if(result == "error"){
-                                                                    $('#delete_error_section<?php echo $row["admission_id"]; ?>').append('<div id = "delete_response"><div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-ban"></i> Something went wrong please try again!!!</div></div>');
-                                                                }
-                                                                if(result == "empty"){
-                                                                    $('#delete_error_section<?php echo $row["admission_id"]; ?>').append('<div id = "delete_response"><div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-ban"></i> Something went wrong please try again!!!</div></div>');
-                                                                }
-                                                                if(result == "success"){
-                                                                    $('#delete_error_section<?php echo $row["admission_id"]; ?>').append('<div id = "delete_response"><div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-check"></i> Student Delete successfully!!!</div></div>');
-                                                                    showUpdatedData();
-                                                                    function showUpdatedData(){
-                                                                        $.ajax({
-                                                                            url: 'include/view.php?action=fetch_student_list_details',
-                                                                            type: 'POST',
-                                                                            data: $('#fetchStudentDataForm').serializeArray(),
-                                                                            success: function(result) {
-                                                                                $('#response').remove();
-                                                                                $('#data_table').append('<div id = "response">' + result + '</div>');
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                }
-                                                                console.log(result);
-                                                                $('#delete_loading').fadeOut(500, function() {
-                                                                    $(this).remove();
-                                                                });
-                                                                $('#delete_student_list_button<?php echo $row["admission_id"]; ?>').prop('disabled', false);
-                                                            }
-
-                                                        });
-                                                    });
-
-                                                });
-
-                                            </script>
-                                        </div>
-                                    </div>
-                                    <!-- Fees delete Section End -->
-                                </tr>
-                            <?php 
-                                $s_no++;
-                            }
-                        } else
-                            echo '
-                                <div class="alert alert-warning alert-dismissible">
-                                    <i class="icon fas fa-exclamation-triangle"></i>  No data available now!!!
-                                </div>';
-                    ?>
-                </tbody>
-            </table> 
-            <script>
-                $(function() {
-                    $("#example1").DataTable();
-                    $('#example2').DataTable({
-                        "paging": true,
-                        "lengthChange": false,
-                        "searching": false,
-                        "ordering": true,
-                        "info": true,
-                        "autoWidth": false,
-                    });
-                });
-
-            </script>
-        <?php      
-            } else
-                echo "0";
-        }
-        //Fetching Precious Fees Due Dates end
-          
-     /* ------------------------------------------------- Fee Payment Start -------------------------------------------------- */
+        /* ------------------------------------------------- Fee Payment Start -------------------------------------------------- */
         // Student fee start
         if($_GET["action"] == "fetch_student_fee_details"){
             $studentRegistrationNo = $_POST["studentRegistrationNo"];
@@ -3526,10 +2600,153 @@
                     $totalRemainings = 0; //In Amount or In Number
                     $totalRebate = 0; //In Amount or In Number
                     $totalPaid = 0; //In Amount or In Number
+                    $total_fine_payment=0; //total fine amount 
+                    $total_fine_payment_remaining=0;
                     //String Variables
                     $arrayPerticular = array();
                     $arrayTblFee = array();
                     $objTblFee = "";
+                    $overall_total_paid=0;
+                    $total_fine_after_paying=0;
+                    $total_fine_remaining=0;
+                    $fee_remaining_from_database=0;
+                    $rebate_fine_by_particular=0;
+                    $total_rebate_fine_payment=0;
+                    $fine_by_particular_remaning=0;
+
+                    function rebate_fine_calculator_by_particular($con,$visible,$studentRegistrationNo,$particular_id){
+                        $fine=0; //fine variable is used for calculating the total fine for a particular id 
+                        
+                      $sqlTblFeePaid = "SELECT *
+                        FROM `tbl_fee_paid`
+                        WHERE `status` = '$visible' AND `student_id` = '$studentRegistrationNo' AND `payment_status` IN ('cleared', 'pending')
+                        AND rebate_amount!='' ORDER BY `rebate_amount` ASC ";
+                        $resultTblFeePaid = $con->query($sqlTblFeePaid);
+            
+                        if($resultTblFeePaid->num_rows > 0){
+                       
+                                while($rowTblFeePaid = $resultTblFeePaid->fetch_assoc()){
+    
+                                    if($rowTblFeePaid['rebate_amount']>0){
+
+                                    $after_expoide_id=explode(",",$rowTblFeePaid['particular_id']);
+                                    $after_PaidAmount = explode(",", $rowTblFeePaid["paid_amount"]);
+                                   // echo "<pre>";
+                                  //  print_r($after_expoide_id);
+                                    for($i=0; $i<count($after_expoide_id); $i++){
+                                        if($after_PaidAmount[$i]!=''){
+                                            if($particular_id== $after_expoide_id[$i]){
+                                            $rebate_fine=  explode(",", $rowTblFeePaid['rebate_amount']) ;
+                                            if($rebate_fine[1]==='fine'){
+                                              $fine=$fine+$rebate_fine[0];
+
+                                            }
+                                            }   
+                                        }
+                                    }
+                                }
+                            }
+                      }
+                        return $fine;
+                    }
+
+
+                    function remaining_fine_calculator_by_particular($con,$visible,$studentRegistrationNo,$particular_id){
+                        $fine=0; //fine variable is used for calculating the total fine for a particular id 
+                        
+                       $sqlTblFeePaid = "SELECT *
+                        FROM `tbl_fee_paid`
+                        WHERE `status` = '$visible' AND `student_id` = '$studentRegistrationNo' AND `payment_status` IN ('cleared', 'pending')
+                        AND remaining_fine!='' ORDER BY `remaining_fine` ASC ";
+                        $resultTblFeePaid = $con->query($sqlTblFeePaid);
+            
+                        if($resultTblFeePaid->num_rows > 0){
+                       
+                                while($rowTblFeePaid = $resultTblFeePaid->fetch_assoc()){
+    
+                                    if($rowTblFeePaid['remaining_fine']>0){
+
+                                    $after_expoide_id=explode(",",$rowTblFeePaid['particular_id']);
+                                    $after_PaidAmount = explode(",", $rowTblFeePaid["paid_amount"]);
+                                    for($i=0; $i<count($after_expoide_id); $i++){
+                                        if($after_PaidAmount[$i]!=''){
+                                            if($particular_id== $after_expoide_id[$i]){
+                                            $fine= $rowTblFeePaid['remaining_fine'] ;
+                                            }   
+                                        }
+                                    }
+                                }
+                            }
+                      }
+                        return $fine;
+                    }
+
+
+
+                    //  this function is making for finding the particular paid  fine amount
+                    //  $con -> is the connection object for making the connection with the database
+                    // $student-> visible is the md5 of string "visible"
+                    // $studentRegistration -> number is the student id actully it is stored into the tbl_admission table the id name is 
+                        // student_id
+                    // $particular_id is the main variable for finding the fine for particular send the particulr id and function return for the particular id 
+                      // have any paid fine amount or not if any amout have then return the amount if or it simply retern 0
+                    
+                      function fine_calculator_by_particular($con,$visible,$studentRegistrationNo,$particular_id){
+                        $fine=0; //fine variable is used for calculating the total fine for a particular id 
+                        
+                       $sqlTblFeePaid = "SELECT *
+                        FROM `tbl_fee_paid`
+                        WHERE `status` = '$visible' AND `student_id` = '$studentRegistrationNo' AND `payment_status` IN ('cleared', 'pending')
+                        AND fine!=''";
+                        $resultTblFeePaid = $con->query($sqlTblFeePaid);
+            
+                        if($resultTblFeePaid->num_rows > 0){
+                       
+                                while($rowTblFeePaid = $resultTblFeePaid->fetch_assoc()){
+    
+                                    if($rowTblFeePaid['fine']>0){
+
+                                    $after_expoide_id=explode(",",$rowTblFeePaid['particular_id']);
+                                    $after_PaidAmount = explode(",", $rowTblFeePaid["paid_amount"]);
+                
+                                    for($i=0; $i<count($after_expoide_id); $i++){
+                                        if($after_PaidAmount[$i]!=''){
+                                            if($particular_id== $after_expoide_id[$i]){
+                                         $fine=$fine+ $rowTblFeePaid['fine'] ;
+                                            }   
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return $fine;
+                    }
+
+                        // fine calculting total
+                        // this function is the so easy function in this function taking 3 arguments
+                        //  $con -> is the connection object for making the connection with the database
+                        // $student-> visible is the md5 of string "visible"
+                        // $studentRegistration -> number is the student id actully it is stored into the tbl_admission table the id name is 
+                        // student_id
+                        function fine_calculator_by_total($con,$visible,$studentRegistrationNo){
+                            $fine=0; //fine variable is used for calculating the total fine for a particular student 
+                            
+                           $sqlTblFeePaid = "SELECT SUM(fine) as fine
+                            FROM `tbl_fee_paid`
+                            WHERE `status` = '$visible' AND `student_id` = '$studentRegistrationNo' AND `payment_status` IN ('cleared', 'pending')
+                            AND fine!=''";
+                            $resultTblFeePaid = $con->query($sqlTblFeePaid);
+                
+                            if($resultTblFeePaid->num_rows > 0){
+                                $rowTblFeePaid = $resultTblFeePaid->fetch_assoc();
+                                    $fine=$rowTblFeePaid['fine'];
+                                
+                            }
+                            return $fine;
+                        }
+
+
+
                     //Checking If Hostel If Available Or Not
                     if(strtolower($row["admission_hostel"]) == "yes")
                         $sqlTblFee = "SELECT *
@@ -3553,6 +2770,7 @@
                                 $fine_particular = $rowTblFee["fee_fine"];
                             else
                                 $fine_particular = 0;
+                     
                             $completeArray = array(
                                                 "fee_id" => $rowTblFee["fee_id"],
                                                 "fee_particulars" => $rowTblFee["fee_particulars"],
@@ -3563,10 +2781,7 @@
                                                 "fee_remaining" => $rowTblFee["fee_amount"],
                                                 "fee_fine_days" => $noOfDays,
                                                 "fee_last_date" => $rowTblFee["fee_lastdate"],
-                                                "paid_fine"=>0,
                                                 "balace_amount"=>0,
-                                          
-
                                             );
                             array_push($arrayTblFee, $completeArray);
                         }
@@ -3602,15 +2817,12 @@
                                     }
                                 }
                             }
-                            $arrayTblFeeUpdate->paid_fine = $rowTblFeePaid["fine"];
-                            $arrayTblFeeUpdate->balace_amount = $rowTblFeePaid["balance"];
-
-                          
+                               $total_balance_amount_after_pay = ($arrayTblFeeUpdate->balace_amount+$rowTblFeePaid["balance"]);
                         }
                     //Define Variables Section End
 
                     // echo "<pre>";
-                    //  print_r($lastpaymentDate);
+                    // print_r( $fineArray);
                    
 
                     ?>
@@ -3623,7 +2835,7 @@
                                   <?php 
                                       if(!empty($row["admission_profile_image"])){ 
                                   ?>
-                                      <img class="profile-user-img " src="images/student_images/<?php echo $row["admission_profile_image"]; ?>" alt="Student profile picture">
+                                      <img class="profile-user-img " src="images/student_images/<?php //echo $row["admission_profile_image"]; ?>" alt="Student profile picture">
                                   <?php 
                                       } else if(strtolower($row["admission_gender"]) == "female"){  
                                   ?>
@@ -3731,120 +2943,120 @@
                                        <input type="hidden" name="registrationNumber" value="<?php echo $studentRegistrationNo; ?>" readonly />
                                        <input type="hidden" name="courseId" value="<?php echo $row["course_id"]; ?>" readonly />
                                        <input type="hidden" name="academicYear" value="<?php echo $row["university_details_id"]; ?>" readonly />
-                                        <div class="col-12 table-responsive">
+                                        <div class="col-12 table-responsive" style="overflow-x:auto;">
                                           <h5>Fee Details of  <b><a href="javascript:void(0);"><?php echo $row["course_name"]." | ".$completeSessionOnlyYear; ?></a></b></h5>
-                                          <table class="table table-bordered table-sm">
+                                          <table class="table table-bordered table-sm table-responsive-lg">
                                             <thead>
-                                                <?
-     echo   $arrayTblFeeUpdate->paid_fine;
-
-                                                ?>
                                             <tr>
                                               <th>S.No</th>
                                               <th>Particulars</th>
                                               <th>Last Date</th>
-
                                               <th>Amount</th>
                                               <th>Paid</th>
                                               <th>Rebate</th>
                                               <th>Remaining</th>
                                               <th>Fine</th>
-                                              <th><span class="text-red">Total<sup class="text-yellow ml-1 text-xs">(Including Fine)</sup></span></th>
+                                              <th>Fine paid</th>
+                                              <th>Fine Rebate </th>
+                                              <th>Fine Remaining</th>
+                                              <th>Total Paid</th>
+                                              <!-- <sup class="text-yellow ml-1 text-xs">(Including Fine)</sup> -->
+                                              <th><span class="text-red">Total Due</span></th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                                 <?php 
+                                                $Idno = 0;
                                                     $tmpSNo = 1;
+                                                    $fine_array=0;
                                                     foreach($arrayTblFee as $arrayTblFeeUpdate){
-
-                                                  
+                                                 
+                                                        if(($arrayTblFeeUpdate->fee_remaining-$arrayTblFeeUpdate->fee_rebate)===0){
+                                                            $arrayTblFeeUpdate->fee_fine_days=0;
+                                                            $arrayTblFeeUpdate->fee_fine=0;
+                                                            $fee_remaining_from_database= remaining_fine_calculator_by_particular($con,$visible,$studentRegistrationNo,$arrayTblFeeUpdate->fee_id);
+                                                        }else{
+                                                          
+                                                            $fee_remaining_from_database= 0;
+                                                        }
                                                     
-                                                        if((($arrayTblFeeUpdate->fee_remaining) - ($arrayTblFeeUpdate->fee_rebate)) == 0){
-                                                            $totalRemainings = $totalRemainings + 0;
-                                                            $totalRemaining = $totalRemaining + 0;
-                                                              $totalFine = $totalFine + 0;
-                                                       
-                                                        }
-                                                        else{
-
-                                                           // if($arrayTblFeeUpdate->fee_last_date >= $lastpaymentDate['cash_date'] && $lastpaymentDate['balance'] != '0')  {  //check condition
-                                                               // $totalRemainings = $totalRemainings + (($arrayTblFeeUpdate->fee_remaining) + 0 - ($arrayTblFeeUpdate->fee_rebate));
-                                                            //}
-                                                           // else{
-
-
-                                                                  $totalRemainings = $totalRemainings + (($arrayTblFeeUpdate->fee_remaining) + (($arrayTblFeeUpdate->fee_fine) * ($arrayTblFeeUpdate->fee_fine_days)) - ($arrayTblFeeUpdate->fee_rebate));
-                                                            //}
-                                                            // checking the key of the data set or not in variable
-
-                                                              $totalRemaining = $totalRemaining + (($arrayTblFeeUpdate->fee_remaining) - ($arrayTblFeeUpdate->fee_rebate));
-                                                             
-                                                             if( isset($arrayTblFeeUpdate->fee_last_date) && isset($lastpaymentDate['cash_date']) && isset($lastpaymentDate['balance'])){ 
-                                                              if($arrayTblFeeUpdate->fee_last_date >= $lastpaymentDate['cash_date'] && $lastpaymentDate['balance'] != '')  {  //check condition
-                                                                  $totalFine = $totalFine + (($arrayTblFeeUpdate->fee_fine) * ($arrayTblFeeUpdate->fee_fine_days));
-
-                                                               } else {
-                                                                $totalFine = ($arrayTblFeeUpdate->fee_fine) * ($arrayTblFeeUpdate->fee_fine_days);
-
-                                                                }
-                                                             }else{
-                                                                $totalFine = $totalFine + (($arrayTblFeeUpdate->fee_fine) * ($arrayTblFeeUpdate->fee_fine_days));
- 
-                                                             }
-                                                       
-                                                        }
+                                                      
                                                         
                                                 ?>
                                                         <tr>
-                                                            <td><?php echo $tmpSNo; ?></td>
-                                                            <td><?php echo $arrayTblFeeUpdate->fee_particulars; ?></td>
-                                                            <td><?php echo  date("d-m-Y", strtotime($arrayTblFeeUpdate->fee_last_date))  ?></td>
-                                                            <td>&#8377; <?php echo number_format($arrayTblFeeUpdate->fee_amount); ?></td>
-                                                            <td>&#8377; <?php echo number_format($arrayTblFeeUpdate->fee_paid); ?></td>
-                                                            <td>&#8377; <?php echo number_format($arrayTblFeeUpdate->fee_rebate); ?></td>
-
-                                                            <?php
-                                                             // getting the balance amount for checking balance amount exits or not
-
-
-                                                             $arrayTblFeeUpdate->fee_remaining;
-                                                                if((($arrayTblFeeUpdate->fee_remaining) - ($arrayTblFeeUpdate->fee_rebate)) == 0 && $arrayTblFeeUpdate->balace_amount==0 ){
-                                                            ?>
-                                                                <td>&#8377; <?php echo 0; ?></td>
-                                                                <td>&#8377; <?php echo 0; ?></td>
-                                                                <td><span class="text-red text-bold">&#8377; <?php echo 0; ?></span></td>
-                                                              <?php } elseif($arrayTblFeeUpdate->fee_remaining!=0) { ?>
-                                                                    
-                                                                        <td>&#8377; <?php echo number_format(($arrayTblFeeUpdate->fee_remaining) - ($arrayTblFeeUpdate->fee_rebate)); ?></td>
+                                                            <td><?php echo $tmpSNo; ?></td> <!-- serial number -->
+                                                            <td><?php echo $arrayTblFeeUpdate->fee_particulars; ?></td>  <!-- particular -->
+                                                            <td><?php echo  date("d-m-Y", strtotime($arrayTblFeeUpdate->fee_last_date))  ?></td> <!--  last date -->
+                                                            <td>&#8377; <?php echo number_format($arrayTblFeeUpdate->fee_amount); ?></td>  <!-- amount -->
+                                                            <td>&#8377; <?php echo number_format($arrayTblFeeUpdate->fee_paid); ?></td>  <!-- paid -->
+                                                            <td>&#8377; <?php echo number_format($arrayTblFeeUpdate->fee_rebate); ?></td>  <!-- rebate -->
+                                                            
+                                                            <!-- Remaining -->
+                                                             <td>&#8377; <?php  echo $total_remaining_amount= ($arrayTblFeeUpdate->fee_remaining) - ($arrayTblFeeUpdate->fee_rebate); ?></td>
+                                                             <?php $totalRemaining= $totalRemaining+$total_remaining_amount;
                                                                         
-                                                                        
-                                                                      <!--check last payment date -->  
-                                                                        <?php //if($arrayTblFeeUpdate->fee_last_date >= $lastpaymentDate['cash_date'] && $lastpaymentDate['balance'] != '0')  { ?> 
-                                                                        <!--<td>&#8377; <?php //echo 0; ?></td>
-                                                                        <td><span class="text-red text-bold">&#8377; <?php //echo 0; ?></span></td>-->
-                                                                        <?php //} else { ?>
-                                                                             <td>&#8377; <?php echo number_format(($arrayTblFeeUpdate->fee_fine) * ($arrayTblFeeUpdate->fee_fine_days)); ?></td> 
-                                                                             <td><span class="text-red text-bold">&#8377; <?php echo number_format(($arrayTblFeeUpdate->fee_remaining) + (($arrayTblFeeUpdate->fee_fine) * ($arrayTblFeeUpdate->fee_fine_days)) - ($arrayTblFeeUpdate->fee_rebate)); ?></span></td>
 
+                                                             ?>
+                                                             
+                                                                            <!-- Fine -->
+                                                                             <td>&#8377; <?php echo $all_fine= ($arrayTblFeeUpdate->fee_fine) * ($arrayTblFeeUpdate->fee_fine_days)+$fee_remaining_from_database ?></td> 
+                                                                            <!-- total fine -->
+                                                                              <?php  $totalFine = $totalFine + $all_fine ?>
+                                                                             <!-- Fine paid -->
+                                                                             <td>&#8377; <?php echo $fine_by_particular= fine_calculator_by_particular($con,$visible,$studentRegistrationNo,$arrayTblFeeUpdate->fee_id)?></td> 
+                                                                           <!-- total fine paid -->
+                                                                              <?php $total_fine_payment=$total_fine_payment+$fine_by_particular;   ?>
+                                                                           <!-- fine rebate -->
+                                                                              <td>&#8377; <?php
+                                                                              echo $rebate_fine_by_particular=  rebate_fine_calculator_by_particular($con,$visible,$studentRegistrationNo,$arrayTblFeeUpdate->fee_id);?></td> 
+                                                                           <!-- total fine paid -->
+                                                                              <?php
+                                                                              
+                                                                              $total_rebate_fine_payment=$total_rebate_fine_payment+$rebate_fine_by_particular;   ?>
+
+                                                                             <!-- fine remaining  -->
+                                                                              <td>&#8377;   <?php
+                                                                              if($fine_by_particular_remaning>0){
+                                                                              echo $fine_by_particular_remaning=  $all_fine-$fine_by_particular-$rebate_fine_by_particular;
+                                                                              }else{
+                                                                            echo    $fine_by_particular_remaning=  $all_fine-$fine_by_particular;
+                                                                              } ?></td> 
+                                                                            
+                                                                              <!-- total fine remaining -->
+                                                                              <?php   $total_fine_payment_remaining= $total_fine_payment_remaining+ $fine_by_particular_remaning ?>                                       
+                                                                             
+                                                                              <!-- Total paid particular -->
+                                                                              <td>&#8377; <?php echo $overall_total_paid_particular=  ($arrayTblFeeUpdate->fee_paid)+fine_calculator_by_particular($con,$visible,$studentRegistrationNo,$arrayTblFeeUpdate->fee_id)+$arrayTblFeeUpdate->fee_rebate+$rebate_fine_by_particular ?></td> 
+                                                                             
+                                                                              <!-- total paid -->
+                                                                              <?php   $overall_total_paid= $overall_total_paid+$overall_total_paid_particular ?>
+                                                                            
+                                                                            
+                                                                                <!-- total remaining including fine -->
+
+                                                                             <td><span class="text-red text-bold">&#8377; <?php echo  $total_remaing_amount_final=$total_remaining_amount+$fine_by_particular_remaning  ?></span></td>
+                                                                             <?php  $totalRemainings=$totalRemainings+$total_remaing_amount_final;  ?>
                                                                             <?php //} ?>
                                                                              <!--check last payment date -->  
+                                                                                <input type="hidden" id="particular_paid_id[<?php echo $Idno; ?>]" name="particular_paid_id[<?php echo $Idno; ?>]" value="<?php echo $arrayTblFeeUpdate->fee_id; ?>" />
+                                                                                <input type="hidden" id="particular_paid_lastDate[<?php echo $Idno; ?>]" name="particular_paid_lastDate[<?php echo $Idno; ?>]" value="<?php echo $arrayTblFeeUpdate->fee_last_date; ?>" />
+                                                                                <input type="hidden" id="particular_paid_fineAmount[<?php echo $Idno; ?>]" name="particular_paid_fineAmount[<?php echo $Idno; ?>]" value="<?php echo $arrayTblFeeUpdate->fee_fine; ?>" />
+                                                                                <input type="hidden" id="particular_paid_amount1[<?php echo $Idno; ?>]" name="particular_paid_amount1[<?php echo $Idno; ?>]" value="<?php echo ($arrayTblFeeUpdate->fee_remaining) - ($arrayTblFeeUpdate->fee_rebate) ?>" />
+                                                                                <input type="hidden" id="particular_fine_remaining[<?php echo $arrayTblFeeUpdate->fee_id; ?>]" name="particular_fine_remaining[<?php echo $Idno; ?>]" value="<?php echo $fine_by_particular_remaning  ?>" />
+                                                                                <input type="hidden" id="particular_fine_for_database" name="particular_fine_for_database[<?php echo $arrayTblFeeUpdate->fee_id; ?>]" value="<?php echo $all_fine  ?>" />
+
                                                                     <?php
-                                                            }else{ ?>
-                                                            <td>&#8377; <?php echo number_format(($arrayTblFeeUpdate->fee_remaining) - ($arrayTblFeeUpdate->fee_rebate)); ?></td>
-                                                            <td>&#8377; <?php echo number_format($arrayTblFeeUpdate->balace_amount); ?></td> 
-                                                            <td><span class="text-red text-bold">&#8377; <?php echo number_format($arrayTblFeeUpdate->balace_amount); ?></span></td>
-                                                           <?php 
-                                                        
-                                                        $totalFine=$arrayTblFeeUpdate->balace_amount;
-                                                        $totalRemainings=$arrayTblFeeUpdate->balace_amount;
-                                                        } ?>
+                                                            //} ?>
 
                                                         </tr>
                                                 <?php 
                                                         $tmpSNo++;
+                                                        $fine_array++;
+                                                        $Idno++;
                                                     } 
                                                 ?>
-                                             
+                                                <input type="hidden" id="total_fine_payment_remaining" value="<?php echo $total_fine_payment_remaining  ?>" />
+
                                                 <tr>
                                                     <td></td>
                                                     <td class="text-right text-bold"></td>
@@ -3856,6 +3068,11 @@
                                                     <td class="text-bold">&#8377; <?php echo number_format($totalRebate); ?></td>
                                                     <td class="text-bold">&#8377; <?php echo number_format($totalRemaining); ?></td>
                                                     <td class="text-bold">&#8377; <?php echo number_format($totalFine); ?></td>
+                                                    <td class="text-bold">&#8377; <?php echo number_format($total_fine_payment); ?></td>
+                                                    <td class="text-bold">&#8377; <?php echo number_format($total_rebate_fine_payment); ?></td>
+                                                    <td class="text-bold">&#8377; <?php echo number_format($total_fine_payment_remaining); ?></td> 
+                                                    <td class="text-bold">&#8377; <?php echo number_format($overall_total_paid); ?></td> 
+
                                                     <td class="text-bold"><span class="text-red"> &#8377; <?php echo number_format($totalRemainings); ?></span></td>
                                                 </tr>
                                             </tbody>
@@ -3885,20 +3102,15 @@
                                                 <?php 
                                                     $tmpSNo = 1;
                                                     $Idno = 0;
-                                                    
-                                                 
+                                            
                                                     foreach($arrayTblFee as $arrayTblFeeUpdate){
-                                                        //echo "<pre>";
-                                                       // print_r($arrayTblFeeUpdate);
+                                                      
                                                 ?>
                                                 <tr> 
                                                     <td><?php echo $tmpSNo; ?></td> 
                                                     <td><?php echo $arrayTblFeeUpdate->fee_particulars; ?></td> 
                                                     <td>
-                                                         <input type="hidden" name="particular_paid_id[<?php echo $Idno; ?>]" value="<?php echo $arrayTblFeeUpdate->fee_id; ?>" />
-                                                         <input type="hidden" id="particular_paid_lastDate[<?php echo $Idno; ?>]" name="particular_paid_lastDate[<?php echo $Idno; ?>]" value="<?php echo $arrayTblFeeUpdate->fee_last_date; ?>" />
-                                                         <input type="hidden" id="particular_paid_fineAmount[<?php echo $Idno; ?>]" name="particular_paid_fineAmount[<?php echo $Idno; ?>]" value="<?php echo $arrayTblFeeUpdate->fee_fine; ?>" />
-                                                         <input type="hidden" id="particular_paid_amount1[<?php echo $Idno; ?>]" name="particular_paid_amount1[<?php echo $Idno; ?>]" value="<?php echo ($arrayTblFeeUpdate->fee_remaining) - ($arrayTblFeeUpdate->fee_rebate) ?>" />
+                                                       
 
                                                          <div class="input-group">
                                                           <div class="input-group-prepend">
@@ -3923,8 +3135,19 @@
                                                         <span class="input-group-text">&#8377;</span>
                                                       </div>
                                                       <input value="<?php echo $totalFine ?>" id="fine_amount1" name="fine_amount" min="0" max="<?php echo $totalFine; ?>" type="hidden"  >
-
                                                       <input value="" id="fine_amount" name="fine_amount" min="0" max="<?php echo $totalFine; ?>" type="number" class="form-control" onKeyup="completeCalculation();" onClick="completeCalculation();" onChange="completeCalculation();" onBlur="completeCalculation();" <?php if($totalFine == 0) echo "readonly"; ?>>
+                                                  
+                                                      <div class="input-group-prepend">
+                                                        <select id="fine_from" onchange="fine_by_remain(this.value)"  name="fine_from" class="btn btn-default btn-block form-control"  >
+                                                          <option selected disabled >Fine For</option>
+                                                          <?php
+                                                              foreach($arrayTblFee as $arrayTblFeeUpdate){
+                                                          ?>
+                                                          <option value="<?php echo $arrayTblFeeUpdate->fee_id; ?>">For - <?php echo $arrayTblFeeUpdate->fee_particulars; ?></option>
+                                                          <?php } ?>
+                                                        </select>
+                                                      </div>
+                                                   
                                                     </div>
                                                 </td> 
                                             </tr>
@@ -3953,7 +3176,7 @@
                                                       </div>
                                                       <input id="rebate_amount" name="rebate_amount" min="0" max="" type="number" class="form-control" onKeyup="completeCalculation();" onClick="completeCalculation();" onChange="completeCalculation();" onBlur="completeCalculation();" >
                                                       <div class="input-group-prepend">
-                                                        <select id="rebate_from" name="rebate_from" class="btn btn-danger btn-block form-control" onKeyup="completeCalculation();" onClick="completeCalculation();" onChange="completeCalculation();" onBlur="completeCalculation();" >
+                                                        <select id="rebate_from" name="rebate_from" class="btn btn-default btn-block form-control" onKeyup="completeCalculation();" onClick="completeCalculation();" onChange="completeCalculation();" onBlur="completeCalculation();" >
                                                           <option value="">Rebate From</option>
                                                           <?php
                                                               foreach($arrayTblFee as $arrayTblFeeUpdate){
@@ -4124,7 +3347,7 @@
                                               <div class="col-md-3" id="" style="margin-top:20px;">
                                                   <div class="form-group">
                                                       <div class="input-group">
-                                                          <button class="btn btn-danger btn-lg btn-block" type="" >Print Receipt</button>
+                                                           <button class="btn btn-danger btn-lg btn-block" type="" >Print Receipt</button> 
                                                       </div>
                                                       <!-- /.input group -->
                                                   </div>
@@ -4132,15 +3355,34 @@
                                           </form>
                                     <script>
 
+                                 // i have making the function for on which of the semester to getting the fine
+                                   function fine_by_remain(particular_id){
+                                   var particular_fine_remaining_amount=  document.getElementById("particular_fine_remaining["+particular_id+"]").value
+                                    $("#fine_amount").val(particular_fine_remaining_amount);
+                                      }
+
+
+
                                      function difference(date1, date2) {  
                                     const date1utc = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
                                     const date2utc = Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate());
                                     day = 1000*60*60*24;
-                                    return(date2utc - date1utc)/day
+                                    total_days=(date2utc - date1utc)/day;
+                                    if(total_days>0){
+                                        return total_days
+                                    }
+                                     
                                             }
 
 
                                         function completeCalculation(){
+                                            var total_calculated_fine1=0;
+                                            var total_calculated_fine=0;
+
+                                            var particular_fine_remaining_amount=0;
+                                            var total_fine_calculated_after=0;
+                                            var total_calculated_fine=0;
+                                            var particular_id=0;
                                             var totalPaid = 0;
                                             var totalParticular = 0;
                                             var fineAmount = 0;
@@ -4174,7 +3416,6 @@
                                                 totalPaid = totalPaidd + parseInt(fineAmount);
                                                 paymentDate = document.getElementById("paymentDate").value;  // get payment date
                                            
-                                            total_calculated_fine=0;
                                                  //get Last date by id
                                             <?php 
                                                 $Idno = 0;
@@ -4185,12 +3426,17 @@
                                                       lastDate =  document.getElementById("particular_paid_lastDate[<?php echo $Idno; ?>]").value;
                                                       fineAmount =  document.getElementById("particular_paid_fineAmount[<?php echo $Idno; ?>]").value;
                                                     amountparticularafterpaying= document.getElementById("particular_paid_amount1[<?php echo $Idno; ?>]").value; 
-                                                   finecalculator(lastDate,amountparticularafterpaying )
+                                                     particular_paid_id1=  document.getElementById("particular_paid_id[<?php echo $Idno; ?>]").value
+                                                     // calling fine calculator function
+                                                    finecalculator(lastDate,amountparticularafterpaying,particular_paid_id1 )
                                                     <?php
                                                     $Idno++;
                                                 } ?>
-                                               function finecalculator(lastDate,particular_paid_amount1){
-                                                // console.log(paymentDate)
+
+                                                // fine calculator function
+                                               function finecalculator(lastDate,particular_paid_amount1,particular_id){
+                                                
+                      
 
                                              if(lastDate <= paymentDate){
                                                  if(particular_paid_amount1!=0){
@@ -4199,34 +3445,32 @@
                                                 date1 = new Date(lastDate),
                                                 date2 = new Date(paymentDate),
                                                 noOfDays = difference(date1,date2); 
-                                               total_calculated_fine= total_calculated_fine+(fineAmount * noOfDays)
-                                                 //  console.log(total_calculated_fine)
+                                                particular_fine_remaining_amount= (fineAmount * noOfDays)
+                                                
+                                                document.getElementById("particular_fine_remaining["+particular_id+"]").value=particular_fine_remaining_amount
+                                                document.getElementById("particular_fine_for_database").value=particular_fine_remaining_amount
+
+                                               total_calculated_fine= total_calculated_fine+ Number(particular_fine_remaining_amount)
+                                                //    console.log(total_calculated_fine)
+                                               }else{
+                                                particular_fine_remaining_amount= Number(document.getElementById("particular_fine_remaining["+particular_id+"]").value)
+                                                total_calculated_fine1=total_calculated_fine1+Number(particular_fine_remaining_amount);
+                                                // console.log(total_calculated_fine1)
+
                                                }
                                              }
                                                }
+                                                // Total fine
+                                                total_fine_calculated_after=Number(total_calculated_fine1)+Number(total_calculated_fine);
+
+                                                total_fine_paying= Number(document.getElementById("fine_amount").value);
+                                                //console.log(total_fine_calculated_after);
+
+                                                remainingAmount = parseInt(<?php echo $totalRemaining; ?>)  - parseInt(totalPaidd)-parseInt(rebateAmount)+parseInt(total_fine_calculated_after)-parseInt(total_fine_paying);
 
                                                
-                                                date1 = new Date(lastDate),
-                                                date2 = new Date(paymentDate),
-                                                noOfDays = difference(date1,date2); // get fee fine days 
-
-                                               total_fine_after_calculated= document.getElementById("fine_amount").value;
-                                                remainingAmount = parseInt(<?php echo $totalRemaining; ?>)  - parseInt(totalPaidd)+total_calculated_fine-rebateAmount-total_fine_after_calculated;
-
-                                                // if(lastDate <= paymentDate){
-
-                                                //     remainingFineAmount =   parseInt(document.getElementById("fine_amount1").value);
-                                                //     if(remainingFineAmount>0){
-                                                //         remainingAmount = (parseInt(<?php echo $totalRemaining; ?>) + (fineAmount * noOfDays) - parseInt(totalPaid) - parseInt(rebateAmount));
-                                                //     console.log(remainingAmount);
-                                                //     }else{
-                                                //         //remainingAmount=0;
-                                                //     }
-
-                                                
-
-                                                // }
-
+                                              
+                                             
 
 
                                             $("#total_amount").val(totalPaid);
@@ -4353,7 +3597,7 @@
 
                                      ?>
                                       <!-- Timeline Section Start -- >
-                                          <!-- timeline time label -->
+                                           timeline time label -->
                                           <div class="time-label">
                                             <span class="bg-success">
                                               <?php echo date("d M, Y", strtotime($row_paid_time["receipt_date"])); ?>
