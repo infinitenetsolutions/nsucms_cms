@@ -2835,7 +2835,7 @@
                                   <?php 
                                       if(!empty($row["admission_profile_image"])){ 
                                   ?>
-                                      <img class="profile-user-img " src="images/student_images/<?php //echo $row["admission_profile_image"]; ?>" alt="Student profile picture">
+                                      <img class="profile-user-img " src="images/student_images/<?php echo $row["admission_profile_image"]; ?>" alt="Student profile picture">
                                   <?php 
                                       } else if(strtolower($row["admission_gender"]) == "female"){  
                                   ?>
@@ -3019,7 +3019,7 @@
                                                                               if($fine_by_particular_remaning>0){
                                                                               echo $fine_by_particular_remaning=  $all_fine-$fine_by_particular-$rebate_fine_by_particular;
                                                                               }else{
-                                                                            echo    $fine_by_particular_remaning=  $all_fine-$fine_by_particular;
+                                                                                echo    $fine_by_particular_remaning=  $all_fine-$fine_by_particular;
                                                                               } ?></td> 
                                                                             
                                                                               <!-- total fine remaining -->
