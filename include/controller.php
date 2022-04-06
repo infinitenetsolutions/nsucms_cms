@@ -1376,6 +1376,8 @@
             $NotesByAdmin = $_POST["NotesByAdmin"];
             $FeeStatus = "cleared";
             $print_generated_by = $_SESSION["admin_name"];
+            $fee_particular_id =   $particular_paid_id[0];
+            $particular_fine_for_database=$_POST['particular_fine_for_database'];
             if($rebate_amount > 0){
                 if($rebate_from == ""){
                     echo '<div class="alert alert-danger alert-dismissible">
