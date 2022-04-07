@@ -24,7 +24,7 @@
         //Database Connection
         public function __construct(){
             // Create connection
-            if($_SERVER['HTTP_HOST'=='localhost']){
+            if($_SERVER['HTTP_HOST']=='localhost'){
             $this->con = new mysqli($this->hostName, $this->userName, $this->password, $this->dbName);
             }else{
                 $this->con = new mysqli("localhost", "nsucms_cms", "wpNnnOv5", "nsucms_cms");
