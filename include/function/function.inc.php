@@ -8,7 +8,7 @@
 // $color-> color is the also a variable which is the default color is blue but you want something different color simply pass into the variable
  
 
-function  paginate( $con, $table_name ,$perPageRecord ,$url ,$id='id',$color="blue"){
+function  paginate( $con, $table_name ,$perPageRecord ,$url ,$condition=1,$id='id',$color="blue"){
 
     $limit = $perPageRecord;
     if (isset($_GET["page"])) {
@@ -16,7 +16,7 @@ function  paginate( $con, $table_name ,$perPageRecord ,$url ,$id='id',$color="bl
     } else {
         $page = 1;
     };
-    $query="SELECT COUNT('$id') FROM `$table_name`";
+    $query="SELECT COUNT('$id') FROM `$table_name` WHERE $condition";
     $result_db = mysqli_query($con, $query );
     $row_db = mysqli_fetch_row($result_db);
     $total_records = $row_db[0];
@@ -135,4 +135,8 @@ function  paginate( $con, $table_name ,$perPageRecord ,$url ,$id='id',$color="bl
 <?php 
    
 }
+
+
+
+
 ?>

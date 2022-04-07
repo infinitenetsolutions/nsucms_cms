@@ -71,7 +71,7 @@ if(!isset($_GET['page'])){
 
                             </div>
                             <!-- /.card-body -->
-                            <?php paginate($con, 'tbl_prospectus', '10', 'prospectus_view') ?>
+                            <?php paginate($con, 'tbl_prospectus', '10', 'prospectus_view','status="'.md5('visible').'"') ?>
                         </div>
                         <!-- /.card -->
                     </div>
@@ -362,9 +362,7 @@ if(!isset($_GET['page'])){
                     }
                 });
 
-            });    $_GET['page']=1;
-}
-
+            }); 
         });
     </script>
     <script>
