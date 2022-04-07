@@ -40,11 +40,11 @@
             $this->password = $password;
             $this->dbName =   $dbName;
             // Create connection
-            $this->con = new mysqli($this->hostName, $this->userName, $this->password, $this->dbName);
-            // Check connection
-            if ($this->con->connect_error) {
-                die("Connection failed: " . $this->con->connect_error);
-            }
+            if($_SERVER['HTTP_HOST']=='localhost'){
+                $this->con = new mysqli($this->hostName, $this->userName, $this->password, $this->dbName);
+                }else{
+                    $this->con = new mysqli("localhost", "nsucms_cms", "wpNnnOv5", "nsucms_cms");
+                }
         }
         public function select($tableName){
             $this->tableName = $tableName;
