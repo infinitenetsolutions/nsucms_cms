@@ -1,6 +1,8 @@
 <?php 
     $page_no = "8";
     $page_no_inside = "8_2";
+    include './include/function/function.inc.php';
+  
 	//authentication start
     //Starting Session
     if(empty(session_start()))
@@ -52,7 +54,16 @@
     }
 	//authentication end
 	//export start
-	$query = "SELECT * FROM `tbl_income` ORDER BY post_at DESC, id DESC";
+    $limit = 10;
+    if (isset($_GET["page"])) {
+        $page  = $_GET["page"];
+    } else {
+        $page = 1;
+    };
+
+    $start_from = ($page - 1) * $limit;
+    $s_no = $start_from + 1;
+ 	$query = "SELECT * FROM `tbl_income` ORDER BY id DESC  LIMIT $start_from, $limit";
 	$results = mysqli_query($con, $query) or die("database error:". mysqli_error($con));								   
 	$allOrders = array();
 	while( $order = mysqli_fetch_assoc($results) ) {
@@ -247,7 +258,7 @@
                     </tr>
                 </thead>
                 <tbody>
-					 <?php	$s_no=1;			 
+					 <?php				 
                         foreach($allOrders as $order){
                             if($order["amount"] != ""){
                                 ?>
@@ -324,7 +335,7 @@
                     ?>
                 </tbody>
             </table>
-                  
+                  <?php echo paginate($con,'tbl_income',"10",'income') ?>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body" id="data_table">
@@ -367,7 +378,7 @@
 	<script>
 			$(document).ready(function () {
 			$('#dtHorizontalExample').DataTable({
-			"scrollX": true
+			"scrollX": false
 			});
 			$('.dataTables_length').addClass('bs-select');
 			});
