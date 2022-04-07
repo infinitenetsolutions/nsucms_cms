@@ -5,9 +5,8 @@ include "../config.php";
 
 
         if($_GET["action"] == "get_prospectus"){
-            echo "working";
         ?>
-            <table id="example1" class="table table-bordered table-striped">
+            <table id="example1" class="table table-bordered table-striped table-responsive-lg">
                 <thead>
                     <tr>
                         <th>S.No</th>
@@ -31,7 +30,7 @@ include "../config.php";
                        $start_from = ($page - 1) * $limit;
                        $s_no = $start_from + 1;
 
-                       echo $sql = "SELECT * FROM `tbl_prospectus`
+                        $sql = "SELECT * FROM `tbl_prospectus`
                                 WHERE `status` = '$visible'
                                 ORDER BY `id` DESC  LIMIT $start_from, $limit 
                                 ";

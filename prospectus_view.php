@@ -3,7 +3,10 @@ $page_no = "4";
 $page_no_inside = "4_1";
 include "include/authentication.php";
 include "include/config.php";
-include "include/function/function.inc.php"
+include "include/function/function.inc.php";
+if(!isset($_GET['page'])){
+    $_GET['page']=1;
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -352,7 +355,7 @@ include "include/function/function.inc.php"
 
                 });
                 $.ajax({
-                    url: 'include/view/prospectus.php?action=get_prospectus',
+                    url: 'include/view/prospectus.php?action=get_prospectus&&page=<?php echo $_GET['page']; ?>',
                     type: 'GET',
                     success: function(result) {
                         $("#data_table").html(result);
