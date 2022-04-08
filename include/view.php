@@ -3943,14 +3943,13 @@
 
                                                                              <!-- fine remaining  -->
                                                                               <td>&#8377;   <?php
-                                                                              if($fine_by_particular_remaning>0){
+                                                                             // if($fine_by_particular_remaning>0){
                                                                               echo $fine_by_particular_remaning=  $all_fine-$fine_by_particular-$rebate_fine_by_particular;
-                                                                              } elseif(($all_fine-$fine_by_particular)>0){
-                                                                                echo    $fine_by_particular_remaning=  $all_fine-$fine_by_particular;
-                                                                              }else{
-                                                                                echo    $fine_by_particular_remaning=  $all_fine-$fine_by_particular;
+                                                                            //  }
+                                                                             //else{
+                                                                               // echo    $fine_by_particular_remaning=  $all_fine-$fine_by_particular;
 
-                                                                              } ?></td> 
+                                                                           //   } ?></td> 
                                                                             
                                                                               <!-- total fine remaining -->
                                                                               <?php   $total_fine_payment_remaining= $total_fine_payment_remaining+ $fine_by_particular_remaning ?>                                       
