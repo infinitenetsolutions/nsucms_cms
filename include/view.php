@@ -4485,8 +4485,9 @@
                                                                     type: 'POST',
                                                                     data: $('#fetchStudentDataForm').serializeArray(),
                                                                     success: function(result) {
-                                                                        //$("#data_table").html(result);
+                                                                       //$("#data_table").html(result);
                                                                         $('#response').remove();
+
                                                                         if(result == 0){
                                                                             $('#error_section').append('<div id = "response"><div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-ban"></i> Please enter Registration Number!!!</div></div>');
                                                                         } else if(result == 1){
@@ -4524,7 +4525,7 @@
                                      <?php 
                                         $sql_paid_time = "SELECT * FROM `tbl_fee_paid`
                                                         WHERE `status` = '$visible' && `student_id` = '$studentRegistrationNo' && `payment_status` != 'deleted'
-                                                        ORDER BY `receipt_date` DESC
+                                                        ORDER BY `feepaid_id` DESC
                                                         ";
                                         $result_paid_time = $con->query($sql_paid_time);
                                         if($result_paid_time->num_rows > 0){
@@ -4537,7 +4538,7 @@
 
                                      ?>
                                       <!-- Timeline Section Start -- >
-                                          <!-- timeline time label -->
+                                           timeline time label -->
                                           <div class="time-label">
                                             <span class="bg-success">
                                               <?php echo date("d M, Y", strtotime($row_paid_time["receipt_date"])); ?>
