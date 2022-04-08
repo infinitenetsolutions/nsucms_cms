@@ -3864,7 +3864,7 @@
                               <div class="card-body">
                                 <div class="tab-content">
                                   <div class="active tab-pane" id="payfee">
-                                   <form method="POST" id="PayFeeForm">
+                                   <form method="POST" id="PayFeeForm" onSubmit="return :false" >
                                     <!-- Table row -->
                                       <div class="row">
                                        <input type="hidden" name="registrationNumber" value="<?php echo $studentRegistrationNo; ?>" readonly />
@@ -4379,8 +4379,8 @@
 
                                                 date1 = new Date(lastDate)
                                                 date2 = new Date(paymentDate)
-                                                 console.log(lastDate)
-                                                 console.log(paymentDate)
+                                              //   console.log(lastDate)
+                                                // console.log(paymentDate)
 
                                                 noOfDays = difference(date1,date2); 
                                                 particular_fine_remaining_amount= (fineAmount * noOfDays)
@@ -4473,18 +4473,22 @@
                                                     success: function(result) {
                                                         $('#response_on_pay_fee').remove();
                                                         if(result == "success"){
+                                                            alert("working")
+
                                                            $('#error_on_pay_fee').append('<div id = "response_on_pay_fee"><div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-check"></i> Fee Paid Successfully!!!</div></div>');
                                                             $('#PayFeeForm')[0].reset();
                                                             $('#loading').fadeOut(1000, function() {
                                                                 $(this).remove();
                                                                 $('#PayText').show();
                                                                 $('#PayFeeButton').prop('disabled', false);
+                                                                console.log($('#fetchStudentDataForm').serializeArray())
                                                                 $.ajax({
                                                                     url: 'include/view.php?action=fetch_student_fee_details',
                                                                     type: 'POST',
                                                                     data: $('#fetchStudentDataForm').serializeArray(),
                                                                     success: function(result) {
                                                                        //$("#data_table").html(result);
+
                                                                         $('#response').remove();
 
                                                                         if(result == 0){
@@ -4492,13 +4496,14 @@
                                                                         } else if(result == 1){
                                                                                     $('#error_section').append('<div id = "response"><div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-ban"></i> Please select Academic Year!!!</div></div>');
                                                                                 } else{
-                                                                                    //$('#fetchStudentDataForm')[0].reset();
+                                                                                    $('#fetchStudentDataForm')[0].reset();
                                                                                     $('#data_table').append('<div id = "response">' + result + '</div>');
                                                                                 }
                                                                         $('#loading').fadeOut(500, function() {
                                                                             $(this).remove();
                                                                         });
                                                                         $('#fetchStudentDataButton').prop('disabled', false);
+
                                                                     }
                                                                 });
                                                             });
@@ -5479,11 +5484,16 @@
                                                     </i>
                                                     Print Receipt
                                                 </button>
+<!-- <?php // if( $_SESSION[''] ) ?> -->
+
+
+                                                <?php if(isset($autority)){ $page_no_temp = 4; $flag = 0; if(isset($allAutority->$page_no_temp)) { $subMenus = explode("||", $allAutority->$page_no_temp); for($i=0; $i<count($subMenus);$i++){ if($subMenus[$i] == "7_3"){  ?>
                                                 <button type="button" class="btn btn-danger btn-sm" onclick="document.getElementById('delete_print_receipts<?php echo $row["feepaid_id"]; ?>').style.display='block'">
                                                     <i class="fas fa-trash">
                                                     </i>
                                                     Delete
                                                 </button>
+                                                <?php  $flag++; break; } } } }  ?>
                                             </form>
 
                                         </td>

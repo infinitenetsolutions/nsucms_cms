@@ -1500,6 +1500,7 @@
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                                      <i class="icon fas fa-check-circle"></i> Fee Successfully paid 
                                      </div>';
+                                     
                             } else
                                 echo '<div class="alert alert-danger alert-dismissible">
                                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
