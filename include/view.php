@@ -4275,7 +4275,7 @@
                                           $row = $result->fetch_assoc();
                                           ?>
                                           <form action="print" method="POST">
-                                          <input type="hidden" name="paidId" value="<?php echo $row["feepaid_id"]; ?>" />
+                                          <input type="hidden" name="paidId" value="<?php echo $row["feepaid_id"]+1; ?>" />
                                               <div class="col-md-3" id="" style="margin-top:20px;">
                                                   <div class="form-group">
                                                       <div class="input-group">
