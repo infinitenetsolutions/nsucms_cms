@@ -1457,11 +1457,11 @@
                             $table_feepaid_id_data = mysqli_fetch_array($table_result)['feepaid_id'];
         
                             //insert into tbl_income
-                            $sql_course = "SELECT * FROM `tbl_course`
-                                WHERE `status` = '$visible' &&  `course_id` = '" . $getRows["admission_course_name"] . "'
-                                ";
-                            $result_course = $con->query($sql_course);
-                            $row_course = $result_course->fetch_assoc();
+                        //  echo    $sql_course = "SELECT * FROM `tbl_course`
+                        //         WHERE `status` = '$visible' &&  `course_id` = '" . $getRows["admission_course_name"] . "'
+                        //         ";
+                        //     $result_course = $con->query($sql_course);
+                        //     $row_course = $result_course->fetch_assoc();
         
                             $perticulars = explode(",", $implodedId);
                             $amounts = explode(",", $implodedAmount);
@@ -1494,13 +1494,8 @@
                             //end tbl_income
         
                             if ($con->query($sql)) {
-                                // $thanksMessage = " \n\nRegards,\nNetaji Subhas University, \nJamshedpur. ";
-                                // $objectSecond->send_otp($mobileNumberOfStudent, $thanksMessage);
-                                echo '<div class="alert alert-success alert-dismissible">
-                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                                     <i class="icon fas fa-check-circle"></i> Fee Successfully paid 
-                                     </div>';
-                                     
+                                echo "success";
+
                             } else
                                 echo '<div class="alert alert-danger alert-dismissible">
                                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>

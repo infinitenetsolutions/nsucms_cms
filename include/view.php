@@ -4274,7 +4274,7 @@
                                           $row = $result->fetch_assoc();
                                           ?>
                                           <form action="print" method="POST">
-                                          <input type="hidden" name="paidId" value="<?php echo $row["feepaid_id"]+1; ?>" />
+                                          <input type="hidden" name="paidId" value="<?php echo $row["feepaid_id"]; ?>" />
                                               <div class="col-md-3" id="" style="margin-top:20px;">
                                                   <div class="form-group">
                                                       <div class="input-group">
@@ -4472,9 +4472,7 @@
                                                     data: $('#PayFeeForm').serializeArray(),
                                                     success: function(result) {
                                                         $('#response_on_pay_fee').remove();
-                                                        if(result == "success"){
-                                                            alert("working")
-
+                                                        if(result == "success"){      
                                                            $('#error_on_pay_fee').append('<div id = "response_on_pay_fee"><div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><i class="icon fas fa-check"></i> Fee Paid Successfully!!!</div></div>');
                                                             $('#PayFeeForm')[0].reset();
                                                             $('#loading').fadeOut(1000, function() {
