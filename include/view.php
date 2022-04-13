@@ -5482,10 +5482,13 @@
                                                     </i>
                                                     Print Receipt
                                                 </button>
-<!-- <?php // if( $_SESSION[''] ) ?> -->
-
-
-                                                <?php if(isset($autority)){ $page_no_temp = 4; $flag = 0; if(isset($allAutority->$page_no_temp)) { $subMenus = explode("||", $allAutority->$page_no_temp); for($i=0; $i<count($subMenus);$i++){ if($subMenus[$i] == "7_3"){  ?>
+                                               <?php  if( $_SESSION['logger_type']=="admin" ){ ?>
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="document.getElementById('delete_print_receipts<?php echo $row["feepaid_id"]; ?>').style.display='block'">
+                                                    <i class="fas fa-trash">
+                                                    </i>
+                                                    Delete
+                                                </button>
+                                                <?php } elseif(isset($autority)){ $page_no_temp = 4; $flag = 0; if(isset($allAutority->$page_no_temp)) { $subMenus = explode("||", $allAutority->$page_no_temp); for($i=0; $i<count($subMenus);$i++){ if($subMenus[$i] == "7_3"){  ?>
                                                 <button type="button" class="btn btn-danger btn-sm" onclick="document.getElementById('delete_print_receipts<?php echo $row["feepaid_id"]; ?>').style.display='block'">
                                                     <i class="fas fa-trash">
                                                     </i>
