@@ -2913,13 +2913,14 @@
                     </form>
                 </div>
             </div>
-            <table id="example1" class="table table-bordered table-striped" style="overflow-x:auto;">
+            <table id="example1" class="table table-bordered table-responsive table-striped" style="overflow-x:auto;">
                 <thead>
                     <tr>
                          <th width="10%">S.No</th>
                         <th  width="10%">Reg. No</th>
                         <th width="10%">Student Name</th>
                         <th width="10%">Course</th>
+                        <th width="10%">Hostel</th>
                         <th width="10%">Father Name</th>
                         <th width="10%">Mother Name</th>
                         <th width="10%">Student Contact No.</th>
@@ -2961,6 +2962,7 @@
                                      <td><?php echo $row["admission_id"] ?></td>
                                       <td><?php echo $row["admission_first_name"] ?> <?php echo $row["admission_middle_name"] ?> <?php echo $row["admission_last_name"] ?></td>
                                     <td><?php echo $row_course["course_name"]; ?></td>
+                                    <td><?php echo $row["admission_hostel"] ?></td>
                                     <td><?php echo $row["admission_father_name"] ?></td>
                                    <td><?php echo $row["admission_mother_name"] ?></td>
                                  <td><?php echo $row["admission_mobile_student"]; ?></td>
@@ -3515,8 +3517,14 @@
                 $result = $con->query($sql);
                 if($result->num_rows > 0){
                     $row = $result->fetch_assoc();
+                    if($row['hostel_leave_date']!=''){
+                        $hostel_leave_date=$row['hostel_leave_date'];
+                    }else{
+                        $hostel_leave_date=date('Y-m-d');
+                    }
                     //Define Variables Section Start
                     //Numeric Veriables
+                    $fee_inserted_date='';
                     $arrayFee = array(); //In Amount or In Number
                     $arrayFine = array(); //In Amount or In Number
                     $arrayRemaining = array(); //In Amount or In Number
@@ -3672,46 +3680,129 @@
                             return $fine;
                         }
 
+                       $total_fee_recoard = "SELECT *
+                        FROM `tbl_fee`
+                        WHERE `status` = '$visible' AND `course_id` = '".$row["admission_course_name"]."' AND `fee_academic_year` = '".$row["admission_session"]."'   ORDER BY `fee_particulars` ASC
+                        ";
+                        $total_fee_result=mysqli_query($con,$total_fee_recoard);
+                       while($total_fee_row=mysqli_fetch_array($total_fee_result)){
+
+                        $checkDate= date('Y-m-d',strtotime(str_replace(',',' ',$total_fee_row['fee_time']))) ;
+                       }
+                       
+
 
 
                     //Checking If Hostel If Available Or Not
-                    if(strtolower($row["admission_hostel"]) == "yes")
+                    if(strtolower($row["admission_hostel"]) == "yes"){
                         $sqlTblFee = "SELECT *
                                      FROM `tbl_fee`
                                      WHERE `status` = '$visible' AND `course_id` = '".$row["admission_course_name"]."' AND `fee_academic_year` = '".$row["admission_session"]."'   ORDER BY `fee_particulars` ASC
                                      ";
-                    else
+                                     $resultTblFee = $con->query($sqlTblFee);
+                                     if($resultTblFee->num_rows > 0)
+                                         while($rowTblFee = $resultTblFee->fetch_assoc()){
+                 
+                                        //  checking the in particular have a hostel or not
+
+                                         if(strripos( $rowTblFee['fee_particulars'],"hostel")==''  ){
+
+                                             if($fee_inserted_date)
+                                             $totalFee = $totalFee + intval($rowTblFee["fee_amount"]);
+                                             if(strtotime(date($rowTblFee["fee_lastdate"])) < strtotime(date("Y-m-d")))
+                                                 $noOfDays = (strtotime(date("Y-m-d")) - strtotime(date($rowTblFee["fee_lastdate"])))/60/60/24;
+                                             else
+                                                 $noOfDays = 0;
+                                             if($rowTblFee["fee_astatus"] == "Active")
+                                                 $fine_particular = $rowTblFee["fee_fine"];
+                                             else
+                                                 $fine_particular = 0;
+                                      
+                                             $completeArray = array(
+                                                                 "fee_id" => $rowTblFee["fee_id"],
+                                                                 "fee_particulars" => $rowTblFee["fee_particulars"],
+                                                                 "fee_amount" => $rowTblFee["fee_amount"],
+                                                                 "fee_paid" => 0,
+                                                                 "fee_fine" => $fine_particular,
+                                                                 "fee_rebate" => 0,
+                                                                 "fee_remaining" => $rowTblFee["fee_amount"],
+                                                                 "fee_fine_days" => $noOfDays,
+                                                                 "fee_last_date" => $rowTblFee["fee_lastdate"],
+                                                                 "balace_amount"=>0,
+                                                             );
+                                             array_push($arrayTblFee, $completeArray);
+                                                         }
+                                                         else{
+                                             // getting the date of the fee table 
+                                            $fee_inserted_date=  date('Y-m-d',strtotime(str_replace(',',' ',$rowTblFee['fee_time']))) ;
+                                                         //  checking the hoster leave date
+                                            if(strtotime($fee_inserted_date)<strtotime($hostel_leave_date)){
+                                             if($fee_inserted_date)
+                                             $totalFee = $totalFee + intval($rowTblFee["fee_amount"]);
+                                             if(strtotime(date($rowTblFee["fee_lastdate"])) < strtotime(date("Y-m-d")))
+                                                 $noOfDays = (strtotime(date("Y-m-d")) - strtotime(date($rowTblFee["fee_lastdate"])))/60/60/24;
+                                             else
+                                                 $noOfDays = 0;
+                                             if($rowTblFee["fee_astatus"] == "Active")
+                                                 $fine_particular = $rowTblFee["fee_fine"];
+                                             else
+                                                 $fine_particular = 0;
+                                      
+                                             $completeArray = array(
+                                                                 "fee_id" => $rowTblFee["fee_id"],
+                                                                 "fee_particulars" => $rowTblFee["fee_particulars"],
+                                                                 "fee_amount" => $rowTblFee["fee_amount"],
+                                                                 "fee_paid" => 0,
+                                                                 "fee_fine" => $fine_particular,
+                                                                 "fee_rebate" => 0,
+                                                                 "fee_remaining" => $rowTblFee["fee_amount"],
+                                                                 "fee_fine_days" => $noOfDays,
+                                                                 "fee_last_date" => $rowTblFee["fee_lastdate"],
+                                                                 "balace_amount"=>0,
+                                                             );
+                                             array_push($arrayTblFee, $completeArray); 
+                                                            }
+
+                                                         }
+                                         }
+                                     
+                    }
+                    else{
                          $sqlTblFee = "SELECT *
                                      FROM `tbl_fee`
                                      WHERE `status` = '$visible' AND `course_id` = '".$row["admission_course_name"]."' AND `fee_academic_year` = '".$row["admission_session"]."'  AND `fee_particulars` NOT IN ('HOSTEL FEE', 'hostel fee', 'Hostel Fee', 'HOSTELS FEES', 'hostels fees', 'Hostels Fees', 'HOSTELS FEE', 'hostels fee', 'Hostels Fee', 'HOSTEL FEES', 'hostel fees', 'Hostel Fees', '1st Year Hostel Fee', '1ST YEAR HOSTEL FEE', '2nd Year Hostel Fee', '2ND YEAR HOSTEL FEE', '3rd Year Hostel Fee', '3RD YEAR HOSTEL FEE', '4th Year Hostel Fee', '4TH YEAR HOSTEL FEE', '5th Year Hostel Fee', '5TH YEAR HOSTEL FEE', '6th Year Hostel Fee', '6TH YEAR HOSTEL FEE','Caution Fee') ORDER BY `fee_particulars` ASC
                                      ";
-                    $resultTblFee = $con->query($sqlTblFee);
-                    if($resultTblFee->num_rows > 0)
-                        while($rowTblFee = $resultTblFee->fetch_assoc()){
-                            $totalFee = $totalFee + intval($rowTblFee["fee_amount"]);
-                            if(strtotime(date($rowTblFee["fee_lastdate"])) < strtotime(date("Y-m-d")))
-                                $noOfDays = (strtotime(date("Y-m-d")) - strtotime(date($rowTblFee["fee_lastdate"])))/60/60/24;
-                            else
-                                $noOfDays = 0;
-                            if($rowTblFee["fee_astatus"] == "Active")
-                                $fine_particular = $rowTblFee["fee_fine"];
-                            else
-                                $fine_particular = 0;
-                     
-                            $completeArray = array(
-                                                "fee_id" => $rowTblFee["fee_id"],
-                                                "fee_particulars" => $rowTblFee["fee_particulars"],
-                                                "fee_amount" => $rowTblFee["fee_amount"],
-                                                "fee_paid" => 0,
-                                                "fee_fine" => $fine_particular,
-                                                "fee_rebate" => 0,
-                                                "fee_remaining" => $rowTblFee["fee_amount"],
-                                                "fee_fine_days" => $noOfDays,
-                                                "fee_last_date" => $rowTblFee["fee_lastdate"],
-                                                "balace_amount"=>0,
-                                            );
-                            array_push($arrayTblFee, $completeArray);
-                        }
+                                     $resultTblFee = $con->query($sqlTblFee);
+                                     if($resultTblFee->num_rows > 0)
+                                         while($rowTblFee = $resultTblFee->fetch_assoc()){
+                                             if($fee_inserted_date)
+                                             $totalFee = $totalFee + intval($rowTblFee["fee_amount"]);
+                                             if(strtotime(date($rowTblFee["fee_lastdate"])) < strtotime(date("Y-m-d")))
+                                                 $noOfDays = (strtotime(date("Y-m-d")) - strtotime(date($rowTblFee["fee_lastdate"])))/60/60/24;
+                                             else
+                                                 $noOfDays = 0;
+                                             if($rowTblFee["fee_astatus"] == "Active")
+                                                 $fine_particular = $rowTblFee["fee_fine"];
+                                             else
+                                                 $fine_particular = 0;      
+                                             $completeArray = array(
+                                                                 "fee_id" => $rowTblFee["fee_id"],
+                                                                 "fee_particulars" => $rowTblFee["fee_particulars"],
+                                                                 "fee_amount" => $rowTblFee["fee_amount"],
+                                                                 "fee_paid" => 0,
+                                                                 "fee_fine" => $fine_particular,
+                                                                 "fee_rebate" => 0,
+                                                                 "fee_remaining" => $rowTblFee["fee_amount"],
+                                                                 "fee_fine_days" => $noOfDays,
+                                                                 "fee_last_date" => $rowTblFee["fee_lastdate"],
+                                                                 "balace_amount"=>0,
+                                                             );
+                                             array_push($arrayTblFee, $completeArray);
+                                                         }
+
+                                     }
+
+
                     $arrayTblFee = json_decode(json_encode($arrayTblFee));
                    // echo "<pre>";
                    // print_r($arrayTblFee);
