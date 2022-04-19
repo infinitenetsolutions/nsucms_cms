@@ -431,12 +431,12 @@
                  <label>Date Of Admission</label>
                   <input type="date" name="date_of_admission" value="<?php echo $row1["date_of_admission"]; ?>" class="form-control" >				
                 </div> 
-
+				<?php if($row1['admission_hostel']=='Yes'){ ?>
 				<div class="col-4">                   
                  <label>Hotel Leaving Date </label>
                   <input type="date" name="hostel_leave_date" value="<?php echo $row1["hostel_leave_date"]; ?>" class="form-control" >				
                 </div> 
-
+				<?php } ?>
                 <div class="col-4">
                   <label>Category</label>
                   <select name="admission_category" class="form-control">
