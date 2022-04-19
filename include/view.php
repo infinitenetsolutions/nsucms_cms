@@ -3802,6 +3802,34 @@
 
                                      }
 
+                                    //  $resultTblFee = $con->query($sqlTblFee);
+                                    //  if($resultTblFee->num_rows > 0)
+                                    //      while($rowTblFee = $resultTblFee->fetch_assoc()){
+                                    //          $totalFee = $totalFee + intval($rowTblFee["fee_amount"]);
+                                    //          if(strtotime(date($rowTblFee["fee_lastdate"])) < strtotime(date("Y-m-d")))
+                                    //              $noOfDays = (strtotime(date("Y-m-d")) - strtotime(date($rowTblFee["fee_lastdate"])))/60/60/24;
+                                    //          else
+                                    //              $noOfDays = 0;
+                                    //          if($rowTblFee["fee_astatus"] == "Active")
+                                    //              $fine_particular = $rowTblFee["fee_fine"];
+                                    //          else
+                                    //              $fine_particular = 0;
+                                      
+                                    //          $completeArray = array(
+                                    //                              "fee_id" => $rowTblFee["fee_id"],
+                                    //                              "fee_particulars" => $rowTblFee["fee_particulars"],
+                                    //                              "fee_amount" => $rowTblFee["fee_amount"],
+                                    //                              "fee_paid" => 0,
+                                    //                              "fee_fine" => $fine_particular,
+                                    //                              "fee_rebate" => 0,
+                                    //                              "fee_remaining" => $rowTblFee["fee_amount"],
+                                    //                              "fee_fine_days" => $noOfDays,
+                                    //                              "fee_last_date" => $rowTblFee["fee_lastdate"],
+                                    //                              "balace_amount"=>0,
+                                    //                          );
+                                    //          array_push($arrayTblFee, $completeArray);
+                                    //      }
+
 
                     $arrayTblFee = json_decode(json_encode($arrayTblFee));
                    // echo "<pre>";
