@@ -3736,7 +3736,7 @@
                                              // getting the date of the fee table 
                                             $fee_inserted_date=  date('Y-m-d',strtotime(str_replace(',',' ',$rowTblFee['fee_time']))) ;
                                                          //  checking the hoster leave date
-                                            if(strtotime($fee_inserted_date)<strtotime($hostel_leave_date)){
+                                            if(strtotime($fee_inserted_date)<=strtotime($hostel_leave_date)){
                                              if($fee_inserted_date)
                                              $totalFee = $totalFee + intval($rowTblFee["fee_amount"]);
                                              if(strtotime(date($rowTblFee["fee_lastdate"])) < strtotime(date("Y-m-d")))
