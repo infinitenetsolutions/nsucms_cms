@@ -12,7 +12,7 @@
                 $result = $con->query($sql);
                 if($result->num_rows > 0){
                     $row = $result->fetch_assoc();
-                    if($row['hostel_leave_date']!=''){
+                    if($row['hostel_leave_date']!='' ){
                         $hostel_leave_date=$row['hostel_leave_date'];
                     }else{
                         $hostel_leave_date=date('Y-m-d');
