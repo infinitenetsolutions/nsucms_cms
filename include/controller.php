@@ -1800,7 +1800,7 @@
                 $sql = "INSERT INTO `tbl_admin`
                             (`admin_id`, `admin_name`, `admin_username`, `admin_password`, `admin_email`, `admin_mobile`, `admin_type`, `admin_permission`, `status`) 
                             VALUES 
-                            ('','$admin_name','$admin_username','$admin_password','$admin_email','$admin_mobile','$admin_type','".json_encode($allPermissions)."','$visible')
+                            (NULL,'$admin_name','$admin_username','$admin_password','$admin_email','$admin_mobile','$admin_type','".json_encode($allPermissions)."','$visible')
                             ";
                 
                 if($con->query($sql)){
