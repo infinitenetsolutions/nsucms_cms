@@ -72,13 +72,14 @@ include "include/authentication.php";
                                             <th>Referred By</th>
                                             <th>Seleted Course</th>
                                             <th>Timing</th>
+                                            <th> Delete</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
 
                                         $result = file_get_contents("http://nsuniv.ac.in/nsuadmin/public/api/getstart");
-                                        $result = json_decode($result);   
+                                        $result = json_decode($result);
                                         $s_no = 1;
                                         foreach ($result as $row) {
                                         ?>
@@ -90,6 +91,15 @@ include "include/authentication.php";
                                                 <td><?php echo $row->referer ?></td>
                                                 <td><?php echo $row->course ?></td>
                                                 <td><?php echo $row->created_at ?></td>
+                                                <td> <a onclick="del<?= $row->id ?>()" class="btn btn-danger btn-sm"> <i class="fas fa-trash"></i> </a> </td>
+                                                <script>
+                                                    function del<?= $row->id ?>() {
+                                                        if (confirm("Are You sure to delete this recoard")) {
+                                                            window.location.replace("http://nsuniv.ac.in/nsuadmin/public/api/getstart/delete/<?= $row->id ?>")
+                                                        }
+                                                    }
+                                                </script>
+
                                             </tr>
                                         <?php $s_no++;
                                         } ?>
