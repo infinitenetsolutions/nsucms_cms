@@ -1,7 +1,7 @@
-<?php 
-    $page_no = "9";
-    $page_no_inside = "9_4";
-    include "include/authentication.php"; 
+<?php
+$page_no = "9";
+$page_no_inside = "9_4";
+include "include/authentication.php";
 ?>
 <!DOCTYPE html>
 <html>
@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="dist/css/adminlte.min.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-    
+
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -62,34 +62,44 @@
                         <div class="card">
                             <!-- /.card-header -->
                             <div class="card-body table-responsive" id="data_table">
-                
+                                <table id="example1" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>S.No</th>
+                                            <th>Applicant Name</th>
+                                            <th>Phone No</th>
+                                            <th>Email</th>
+                                            <th>Referred By</th>
+                                            <th>Seleted Course</th>
+                                            <th>Timing</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+
+                                        $result = file_get_contents("http://nsuniv.ac.in/nsuadmin/public/api/getstart");
+                                        $result = json_decode($result);   
+                                        $s_no = 1;
+                                        foreach ($result as $row) {
+                                        ?>
+                                            <tr>
+                                                <td><?php echo $s_no; ?></td>
+                                                <td><?php echo $row->name ?></td>
+                                                <td><?php echo $row->phone ?></td>
+                                                <td><?php echo $row->email ?></td>
+                                                <td><?php echo $row->referer ?></td>
+                                                <td><?php echo $row->course ?></td>
+                                                <td><?php echo $row->created_at ?></td>
+                                            </tr>
+                                        <?php $s_no++;
+                                        } ?>
+                                    </tbody>
+                                </table>
                             </div>
                             <!-- /.card-body -->
                         </div>
                         <!-- /.card -->
                     </div>
-                    
-                    
-                    
-                   <!--  <div class="col-md-12">
-                        <div class="card card-danger card-outline">
-                            <div class="card-header card-warning">
-                                <center>
-                                    <div class="btn-group">
-                                        <button type="button" class="pr-2 pl-2 btn btn-default pagiNation" id="optionPre" name="options" value="pre">Pre</button>
-                                        <button type="button" class="pr-2 pl-2 btn btn-danger pagiNation" id="option1" name="options" value="1">1</button>
-                                        <button type="button" class="pr-2 pl-2 btn btn-default pagiNation" id="option2" name="options" value="2">2</button>
-                                        <button type="button" class="pr-2 pl-2 btn btn-default pagiNation" id="dynamicChangeNumber" name="options" value="3">3</button>
-                                        <button type="button" class="pr-2 pl-2 btn btn-default"  value="">...</button>
-                                        <button type="button" class="pr-2 pl-2 btn btn-default pagiNation" id="optionNext" name="options" value="next">Next</button>
-                                    </div>
-                                </center>
-                            </div>
-                        </div>
-                    </div>-->
-                    
-                    
-                    
                     <!-- /.col -->
                 </div>
                 <!-- /.row -->
@@ -133,15 +143,15 @@
         });
     </script>
     <script>
-        $(document).ready(function() {
-            $.ajax({
-                url: 'include/view.php?action=get_nsuniv_get_enquiry',
-                type: 'GET',
-                success: function(result) {
-                    $("#data_table").html(result);
-                }
-            });
-        });
+        // $(document).ready(function() {
+        //     $.ajax({
+        //         url: 'include/view.php?action=get_nsuniv_get_enquiry',
+        //         type: 'GET',
+        //         success: function(result) {
+        //             $("#data_table").html(result);
+        //         }
+        //     });
+        // });
     </script>
 </body>
 
