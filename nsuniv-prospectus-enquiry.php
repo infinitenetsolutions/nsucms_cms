@@ -105,32 +105,7 @@ if (isset($_SESSION['condition'])) {
 
                                     </select>
 
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                        Launch demo modal
-                                    </button>
-
-                                    <!-- Modal -->
-                                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    ...
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                                   
                                 </div>
                                 <form method="POST" action="export-list" class="float-right mb-0">
                                     <input type="hidden" name="action" value="export_all_prospectus_details" />
@@ -139,25 +114,25 @@ if (isset($_SESSION['condition'])) {
                             </div>
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-3 p-3">
                         <input type="text" value="<?= $_SESSION['q'] ?>" class="form-control form-control-sm " placeholder="Search .." name="" onkeyup="search(this.value)">
                     </div>
 
                 </div>
                 <div id="demo">
-                    <div class="table-responsive" class="card">
+                    <div class="table-responsive" class="card bg-white">
                         <table class="table table-bordered table-striped table-responsive-lg ">
                             <thead>
                                 <tr>
-                                    <?php thGen("tbl_prospectus", 'true')  ?>
+                                    <?php thGen("tbl_prospectus_view", 'true')  ?>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php tdGen("tbl_prospectus", 'edit', 'delete', 'Product List', $condition, 50) ?>
+                                <?php tdGen("tbl_prospectus_view", 'edit', 'delete', 'Product List', $condition, 50) ?>
                             </tbody>
                         </table>
                     </div>
-                    <?php paginate('tbl_prospectus', '50', 'nsuniv-prospectus-enquiry', $condition1) ?>
+                    <?php paginate('tbl_prospectus_view', '50', 'nsuniv-prospectus-enquiry', $condition1) ?>
                 </div>
 
                 <!-- /.col -->
@@ -204,7 +179,7 @@ if (isset($_SESSION['condition'])) {
 
     <script>
         function search(data) {
-            prospectus();
+            this.prospectus();
             const xhttp = new XMLHttpRequest();
             xhttp.onload = function() {
                 document.getElementById("demo").innerHTML = this.responseText;

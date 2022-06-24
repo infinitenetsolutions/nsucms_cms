@@ -9,5 +9,5 @@ if (isset($_GET["page"])) {
 $start_from = ($page - 1) * $limit;
 $s_no = $start_from + 1;
 $condition = '1 LIMIT ' . $start_from . ',' . $limit;
-searchWithPaginationAll("tbl_prospectus", $limit, 'nsuniv-prospectus-enquiry', 'true', 'edit', 'delete', 'Products List', $condition);
+searchWithPaginationAll("tbl_prospectus_view", $limit, 'nsuniv-prospectus-enquiry', 'true', 'edit', 'delete', 'Products List', $condition);
 ?>
