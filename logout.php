@@ -1,13 +1,3 @@
-<?php
-    //Starting Session
-    if(empty(session_start()))
-        session_start();
-    //DataBase Connectivity
-    include "include/config.php";
-    unset($_SESSION["logger_time"]);
-    unset($_SESSION["logger_type"]);
-    unset($_SESSION["logger_username"]);
-    unset($_SESSION["logger_password"]);
-    if(!isset($_SESSION["logger_type"]) && !isset($_SESSION["logger_username"]) && !isset($_SESSION["logger_password"]))
-        echo "<script> location.replace('index'); </script>";
-?>
+version https://git-lfs.github.com/spec/v1
+oid sha256:ef82bd75cffe5f0c6077f1417f05af2d76c5d5a413a88f174ca58beaf8d9374a
+size 500

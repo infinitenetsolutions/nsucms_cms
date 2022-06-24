@@ -1,17 +1,3 @@
-Package.describe({
-  name: 'dangrossman:bootstrap-daterangepicker',
-  version: '3.0.5',
-  summary: 'Date range picker component',
-  git: 'https://github.com/dangrossman/daterangepicker',
-  documentation: 'README.md'
-});
-
-Package.onUse(function(api) {
-  api.versionsFrom('METEOR@0.9.0.1');
-
-  api.use('momentjs:moment@2.22.1', ["client"]);
-  api.use('jquery@3.3.1', ["client"]);
-
-  api.addFiles('daterangepicker.js', ["client"]);
-  api.addFiles('daterangepicker.css', ["client"]);
-});
+version https://git-lfs.github.com/spec/v1
+oid sha256:e8e6de9203c8e63b68d4c5414203592484fd9e2ea3c613720ef567ea956e6983
+size 501

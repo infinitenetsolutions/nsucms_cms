@@ -1,12 +1,3 @@
-<?php
-    //Starting Session
-    if(empty(session_start()))
-        session_start();
-    //DataBase Connectivity
-    include "include/config.php";
-    unset($_SESSION["logger_time"]);
-    unset($_SESSION["logger_username1"]);
-    unset($_SESSION["logger_password1"]);
-    if(!isset($_SESSION["logger_username1"]) && !isset($_SESSION["logger_password1"]))
-        echo "<script> location.replace('student_login'); </script>";
-?>
+version https://git-lfs.github.com/spec/v1
+oid sha256:71756cbc6f5aa2c9294921b301ff938254f824df5a3811e692d6fa8cbeb8b821
+size 438

@@ -1,29 +1,3 @@
-import babel from 'rollup-plugin-babel'
-
-const pkg  = require('../../package')
-const year = new Date().getFullYear()
-
-const globals = {
-  jquery: 'jQuery'
-}
-
-export default {
-  input  : 'build/js/AdminLTE.js',
-  output : {
-    banner: `/*!
- * AdminLTE v${pkg.version} (${pkg.homepage})
- * Copyright 2014-${year} ${pkg.author}
- * Licensed under MIT (https://github.com/ColorlibHQ/AdminLTE/blob/master/LICENSE)
- */`,
-    file  : 'dist/js/adminlte.js',
-    format: 'umd',
-    globals,
-    name  : 'adminlte'
-  },
-  plugins: [
-    babel({
-      exclude: 'node_modules/**',
-      externalHelpers: true
-    })
-  ]
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:8afe7a092cb8759539107c4a1719d728508dc80e2c4b4a3ba5d0fd331b28770a
+size 610

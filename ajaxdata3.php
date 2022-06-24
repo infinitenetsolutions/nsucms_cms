@@ -1,18 +1,3 @@
-<?php
-include 'include/config.php';
- $visible = md5("visible");
-$id = $_POST['depart'];   // id
-$academic_year = $_POST['academic_year']; //academic_year
-//echo $visible;
-//echo $id; echo $academic_year; 
-   //var_dump($id);exit();  $sql = "SELECT * FROM users WHERE username ='".$userName."'";
-$sql = "SELECT semester_id,semester,exam_fee FROM tbl_semester WHERE course_id=".$id." && fee_academic_year=".$academic_year." && status ='".$visible."'";
- //var_dump("SELECT semester_id,semester,exam_fee FROM tbl_semester WHERE course_id=".$id." && fee_academic_year=".$academic_year." && status=".$visible);exit();
-
-$result = mysqli_query($con,$sql);
-echo "<option>Select</option>";
-while( $row = mysqli_fetch_array($result) ){
-   
-   echo '<option value="'.$row['semester_id'].'">'.$row['semester'].'   </option>';
-}
-?>
+version https://git-lfs.github.com/spec/v1
+oid sha256:8b138e86ced575b0e93104fd2eb00eeb9127d68a9be7d6f4453408435c70c527
+size 817
